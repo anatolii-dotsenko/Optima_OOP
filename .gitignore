@@ -1,0 +1,82 @@
+# -----------------------------
+# Python build and bytecode
+# -----------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# C extensions
+*.dll
+*.dylib
+
+# -----------------------------
+# Virtual environments
+# -----------------------------
+.venv/
+venv/
+env/
+ENV/
+
+# -----------------------------
+# IDE / Editor files
+# -----------------------------
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# -----------------------------
+# OS-generated files
+# -----------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# -----------------------------
+# Test and coverage outputs
+# -----------------------------
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# -----------------------------
+# Build / distribution outputs
+# -----------------------------
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# -----------------------------
+# Logs and temporary files
+# -----------------------------
+*.log
+*.tmp
+*.bak
+
+# -----------------------------
+# Jupyter / Notebook
+# -----------------------------
+.ipynb_checkpoints/
+
+# -----------------------------
+# Environment and secrets
+# -----------------------------
+.env
+.env.*
+*.secret
+*.key
+
+# -----------------------------
+# Project-specific ignores
+# -----------------------------
+# Ignore generated documentation or reports
+docs/_build/
+reports/
+
+# Ignore local scripts or scratch files
+sandbox/
+scratch/
