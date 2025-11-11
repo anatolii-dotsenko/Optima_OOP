@@ -1,8 +1,8 @@
 """Main simulation file demonstrating character interactions."""
 
-from .character import Warrior, Mage
-from .items import Item
-from .abilities import Ability
+from character import Warrior, Mage
+from items import Item
+from abilities import Ability
 
 
 def main():
