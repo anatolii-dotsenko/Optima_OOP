@@ -1,8 +1,8 @@
 """Module defining the base Character class and its subclasses."""
 
 from abc import ABC, abstractmethod
-from .abilities import Ability
-from .items import Item
+from abilities import Ability
+from items import Item
 
 
 class Character(ABC):

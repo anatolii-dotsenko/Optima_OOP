@@ -1,6 +1,6 @@
 """Module defining items that can modify character stats or grant abilities."""
 
-from .abilities import Ability
+from abilities import Ability
 
 
 class Item:
