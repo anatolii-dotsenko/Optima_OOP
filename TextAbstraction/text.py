@@ -61,6 +61,11 @@ class Text:
             
         return "\n".join(lines)
 
+    def save_to_file(self, filename: str):
+        with open(filename, "w", encoding="utf-8") as f:
+            f.write(str(self))
+        print(f"Document saved to {filename}")
+
     def __str__(self) -> str:
         """
         Renders the entire document by combining rendered elements.
