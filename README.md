@@ -94,8 +94,7 @@ python --version
 
 ### 2️⃣ Clone or copy the project files
 ```bash
-git clone https://github.com/yourusername/game-character-system.git
-cd game-character-system
+git clone https://github.com/anatolii-dotsenko/Optima_OOP.git
 ```
 
 ### 3️⃣ Install dependencies
