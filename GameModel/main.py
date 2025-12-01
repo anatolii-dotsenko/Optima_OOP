@@ -13,7 +13,7 @@ def main():
     # Define abilities
     lightning_strike = Ability(
         "Lightning Strike",
-        lambda user, target: setattr(target, "health", target.health - 20)
+        lambda user, target: target.take_damage(20)
     )
 
     # Create items

@@ -50,6 +50,12 @@ class Character(ABC):
         self.health += amount
         print(f"{self.name} heals for {amount} HP. ({self.health} total)")
 
+    def take_damage(self, amount: int):
+        self.health -= max(0, amount) # prevent negative damage
+        print(f"{self.name} takes {amount} damage! ({self.health} HP left)")
+        if self.health < 0:
+            self.health = 0 
+
     def defend(self, amount: int):
         """Temporarily increase armor."""
         self.armor += amount
