@@ -30,32 +30,6 @@ game/
 
 ---
 
-## 🧩 Example Simulation
-
-```bash
-python -m game.main
-```
-
-**Output example:**
-```
-Thorin equipped Flaming Sword.
-Elara equipped Amulet of Storms.
-
---- Battle Begins ---
-Thorin attacks Elara for 12 damage! (68 HP left)
-Elara uses ability: Lightning Strike!
-Thorin takes 20 damage.
-Thorin uses *Power Strike*! Deals 30 ignoring armor.
-Elara casts *Fireball*! Thorin takes 25 damage.
-Elara heals for 10 HP. (78 total)
-
---- Final Stats ---
-Thorin: 75 HP
-Elara: 78 HP
-```
-
----
-
 ## 🧱 Class Overview
 
 ### `Character` (Abstract)
@@ -107,10 +81,3 @@ To run the game, execute the following command:
 ```
 python src/main.py
 ```
-
-## Examples
-- Create a Warrior and a Mage character, simulate combat, and visualize the results.
-- Manage inventories and equip items to characters.
-
-## Contributing
-Feel free to submit issues or pull requests to improve the project.
