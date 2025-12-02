@@ -37,7 +37,7 @@ GameModel/
 ├── Logging/            # Output handling
 │   ├── ICombatLogger.cs
 │   └── ConsoleLogger.cs
-├── Program.cs          # Entry point (Simulation logic)
+├── Game.cs          # Entry point (Simulation logic)
 └── GameModel.csproj    # Project configuration
 ```
 
