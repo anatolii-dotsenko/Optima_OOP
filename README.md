@@ -44,10 +44,33 @@ GameModel/
 ## 🚀 Getting Started
 **Prerequisites**
     .NET SDK: Ensure you have the .NET SDK installed (It was written with .NET 10.0 🤷‍♂️).
-        `check with: dotnet --version`
+        check with: `dotnet --version`
 
 **Installation**
-    Clone the repository:
-    Navigate to the project folder:
-        cd GameModel
-        dotnet run
+Clone the repository:
+`git clone https://github.com/anatolii-dotsenko/Optima_OOP/tree/main`
+Navigate to the project folder:
+`cd GameModel`
+`dotnet run`
+
+ This will compile the project and execute the Program.cs entry point, displaying the battle simulation in the console.
+
+ ## 🛠️ Usage Example
+ The Program.cs typically initializes the simulation like this:
+```text
+ // 1. Setup Logger and Combat System
+ICombatLogger logger = new ConsoleLogger();
+CombatSystem combat = new CombatSystem(logger);
+
+// 2. Create Characters
+Warrior hero = new Warrior("Aragorn");
+Mage villain = new Mage("Saruman");
+
+// 3. Equip Items
+hero.EquipItem(new Sword());
+villain.EquipItem(new MagicAmulet());
+
+// 4. Fight!
+combat.Attack(hero, villain);
+combat.UseAbility(villain, hero, "Fireball");
+```
