@@ -1,45 +1,3 @@
-// using GameModel.Characters;
-// using GameModel.Items;
-// using GameModel.Logging;
-// using GameModel.Combat;
-
-// class Program
-// {
-//     static void Main()
-//     {
-//         ICombatLogger logger = new ConsoleLogger();
-//         CombatSystem combat = new CombatSystem(logger);
-
-//         // Create characters
-//         var warrior = new Warrior("Thorin");
-//         var mage = new Mage("Elira");
-
-//         // Equip items
-//         warrior.EquipItem(new Sword());
-//         warrior.EquipItem(new Shield());
-
-//         mage.EquipItem(new MagicAmulet());
-
-//         // Show start
-//         logger.Write("=== BATTLE STARTS ===");
-
-//         // Round 1
-//         combat.Attack(warrior, mage);
-//         combat.UseAbility(mage, warrior, "Fireball");
-
-//         // Round 2
-//         combat.UseAbility(warrior, mage, "Power Strike");
-//         combat.Heal(mage, 10);
-
-//         // Round 3
-//         combat.Attack(warrior, mage);
-//         combat.Attack(mage, warrior);
-
-//         logger.Write("=== BATTLE ENDS ===");
-//     }
-// }
-
-
 using System;
 using System.Linq;
 using GameModel.Characters;
@@ -53,59 +11,76 @@ namespace GameModel
     {
         static void Main(string[] args)
         {
+            // 1. Initialize System
             ICombatLogger logger = new ConsoleLogger();
             CombatSystem combat = new CombatSystem(logger);
 
-            // Create characters
-            // Thorin: Warrior (Base: 150 HP, 10 Armor, 15 Attack)
+            // 2. Create Characters
             Warrior thorin = new Warrior("Thorin");
-            // Elira: Mage (Base: 90 HP, 3 Armor, 12 Attack)
             Mage elira = new Mage("Elira");
 
-            // Equip items
-            // Thorin equips Sword (+12 Atk) та Shield (+4 Armor)
-            // Total: Attack 20, Armor 14.
+            // 3. Equip Items
             thorin.EquipItem(new Sword());
             thorin.EquipItem(new Shield());
-
-            // Elira equips MagicAmulet (+20 HP, Fireball)
-            // Total: HP 110.
             elira.EquipItem(new MagicAmulet());
 
-            // Starting stats
+            // 4. Pre-Battle Stats
             Console.WriteLine("=== PRE-BATTLE STATS ===");
             PrintCharacterInfo(thorin);
             PrintCharacterInfo(elira);
             Console.WriteLine();
 
-            // Battle simulation
+            // 5. Battle Simulation
             Console.WriteLine("=== BATTLE STARTS ===");
 
-            // Thorin attacks Elira (27 Atk - 3 Armor = 24 Dmg)
+            // Action 1: Thorin attacks
             combat.Attack(thorin, elira);
+            if (CheckIfDead(thorin, elira)) goto PostBattle;
 
-            // Elira uses Fireball (Fixed 75 Dmg)
+            // Action 2: Elira uses Fireball
             combat.UseAbility(elira, thorin, "Fireball");
+            if (CheckIfDead(thorin, elira)) goto PostBattle;
 
-            // Thorin uses Power Strike (27 Atk * 2 = 54 Dmg)
+            // Action 3: Thorin uses Power Strike
             combat.UseAbility(thorin, elira, "Power Strike");
+            if (CheckIfDead(thorin, elira)) goto PostBattle;
 
-            // Elira heals (+10 HP)
+            // Action 4: Elira heals
             combat.Heal(elira, 10);
+            if (CheckIfDead(thorin, elira)) goto PostBattle;
 
-            // Thorin attacks Elira (24 Dmg)
+            // Action 5: Thorin attacks again
             combat.Attack(thorin, elira);
+            if (CheckIfDead(thorin, elira)) goto PostBattle;
 
-            // Elira attacks Thorin (15 Atk - 14 Armor = 1 Dmg)
+            // Action 6: Elira attacks
             combat.Attack(elira, thorin);
+            if (CheckIfDead(thorin, elira)) goto PostBattle;
 
+            PostBattle:
             Console.WriteLine("=== BATTLE ENDS ===");
             Console.WriteLine();
 
-            // 6. Вивід кінцевих статів
+            // 6. Post-Battle Stats
             Console.WriteLine("=== POST-BATTLE STATS ===");
             PrintCharacterInfo(thorin);
             PrintCharacterInfo(elira);
+        }
+
+        // Helper method to check health and print defeat message
+        static bool CheckIfDead(Character c1, Character c2)
+        {
+            if (c1.Health <= 0)
+            {
+                Console.WriteLine($"\n*** {c1.Name} has been defeated! ***");
+                return true;
+            }
+            if (c2.Health <= 0)
+            {
+                Console.WriteLine($"\n*** {c2.Name} has been defeated! ***");
+                return true;
+            }
+            return false;
         }
 
         static void PrintCharacterInfo(Character c)
@@ -119,7 +94,7 @@ namespace GameModel
 
             Console.WriteLine($"Name:   {c.Name} ({c.GetType().Name})");
             Console.WriteLine($"Status: {status}");
-            Console.WriteLine($"HP:     {c.Health}/{stats.TotalMaxHealth}");
+            Console.WriteLine($"HP:     {Math.Max(0, c.Health)}/{stats.TotalMaxHealth}");
             Console.WriteLine($"Atk:    {stats.TotalAttack}");
             Console.WriteLine($"Arm:    {stats.TotalArmor}");
             Console.WriteLine($"Items:  {items}");
