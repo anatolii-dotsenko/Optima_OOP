@@ -8,7 +8,7 @@ namespace GameModel.Characters
     public class Mage : Character
     {
         public Mage(string name)
-            : base(name, maxHealth: 90, armor: 3, attack: 12)
+            : base(name, maxHealth: 90, armor: 3, attack: 15)
         {
             Abilities.Add(new Fireball());
         }

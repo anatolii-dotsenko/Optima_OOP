@@ -63,7 +63,7 @@ namespace GameModel
             Mage elira = new Mage("Elira");
 
             // Equip items
-            // Thorin equips Sword (+5 Atk) та Shield (+4 Armor)
+            // Thorin equips Sword (+12 Atk) та Shield (+4 Armor)
             // Total: Attack 20, Armor 14.
             thorin.EquipItem(new Sword());
             thorin.EquipItem(new Shield());
@@ -81,22 +81,22 @@ namespace GameModel
             // Battle simulation
             Console.WriteLine("=== BATTLE STARTS ===");
 
-            // Thorin attacks Elira (20 Atk - 3 Armor = 17 Dmg)
+            // Thorin attacks Elira (27 Atk - 3 Armor = 24 Dmg)
             combat.Attack(thorin, elira);
 
-            // Elira uses Fireball (Fixed 25 Dmg)
+            // Elira uses Fireball (Fixed 75 Dmg)
             combat.UseAbility(elira, thorin, "Fireball");
 
-            // Thorin uses Power Strike (20 Atk * 2 = 40 Dmg)
+            // Thorin uses Power Strike (27 Atk * 2 = 54 Dmg)
             combat.UseAbility(thorin, elira, "Power Strike");
 
             // Elira heals (+10 HP)
             combat.Heal(elira, 10);
 
-            // Thorin attacks Elira (17 Dmg)
+            // Thorin attacks Elira (24 Dmg)
             combat.Attack(thorin, elira);
 
-            // Elira attacks Thorin (12 Atk - 14 Armor = 0 Dmg)
+            // Elira attacks Thorin (15 Atk - 14 Armor = 1 Dmg)
             combat.Attack(elira, thorin);
 
             Console.WriteLine("=== BATTLE ENDS ===");

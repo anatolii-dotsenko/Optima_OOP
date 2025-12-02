@@ -43,8 +43,10 @@ namespace GameModel.Combat
                 return;
             }
 
-            _logger.Write($"{user.Name} uses {ability.Name}!");
-            ability.Apply(user, target);
+            // Apply now returns the damage dealt
+            int damageDealt = ability.Apply(user, target);
+            
+            _logger.Write($"{user.Name} uses {ability.Name} on {target.Name} dealing {damageDealt} damage.");
         }
 
         /// <summary>

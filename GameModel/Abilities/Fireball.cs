@@ -9,9 +9,11 @@ namespace GameModel.Abilities
     {
         public Fireball() : base("Fireball") { }
 
-        public override void Apply(Character user, Character target)
+        public override int Apply(Character user, Character target)
         {
-            target.TakeDamage(25);
+            int damage = 75;
+            target.TakeDamage(damage);
+            return damage;
         }
     }
 }
