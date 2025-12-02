@@ -43,18 +43,17 @@ GameModel/
 
 ## 🚀 Getting Started
 **Prerequisites**
-* .NET SDK: Ensure you have the .NET SDK installed.
-* Check with: 
+* * .NET SDK: Ensure you have the .NET SDK installed. Check with:
 ```text 
 dotnet --version
 ```
 
 **Installation**
-Clone the repository:
+* * Clone the repository:
 ```text
  git clone https://github.com/anatolii-dotsenko/Optima_OOP/tree/main
  ```
-Navigate to the project folder:
+* * Navigate to the project folder:
 ```text
 cd GameModel
 dotnet run
