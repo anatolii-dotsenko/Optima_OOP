@@ -43,8 +43,8 @@ GameModel/
 
 ## 🚀 Getting Started
 **Prerequisites**
-    .NET SDK: Ensure you have the .NET SDK installed (Recommended: .NET 8.0 or newer).
-        check with: dotnet --version
+    .NET SDK: Ensure you have the .NET SDK installed (It was written with .NET 10.0 🤷‍♂️).
+        `check with: dotnet --version`
 
 **Installation**
     Clone the repository:
