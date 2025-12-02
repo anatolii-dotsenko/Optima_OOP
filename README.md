@@ -1,134 +1,44 @@
-# 🐍 Optima OOP Project
+# ⚔️ Optima OOP Combat Simulation
 
-A collection of object-oriented programming (OOP) simulations demonstrating core principles such as Inheritance, Polymorphism, Composition, and Abstraction.
+A C# console application designed to demonstrate core Object-Oriented Programming (OOP) principles. The project simulates a turn-based combat system featuring characters with unique stats, abilities, and inventory management.
 
-The project is divided into two independent modules:
-1. **Game Model** — A combat simulation with characters, items, and abilities.
-2. **Text Abstraction** — A document structure system using composite elements.
+## 📋 Overview
 
----
+This project models a game system where characters (Warriors, Mages) interact using a robust combat engine. It emphasizes clean architecture, separation of concerns, and extensibility.
+
+### Key Features
+* **OOP Principles:** Demonstrates Inheritance, Polymorphism, Encapsulation, and Composition.
+* **Character System:** Abstract base `Character` class with concrete implementations (`Warrior`, `Mage`).
+* **Combat Logic:** A dedicated `CombatSystem` handles interactions (attacks, damage calculation) separately from data classes.
+* **Inventory & Abilities:** Items can modify stats dynamically and grant new abilities (e.g., a `MagicAmulet` granting a `Fireball` spell).
+* **Logging:** Flexible `ICombatLogger` interface for outputting battle events.
 
 ## 📂 Project Structure
 
+The solution is organized into logical namespaces and folders:
+
 ```text
-Optima_OOP/
-│
-├── GameModel/           # Module 1: Game Character System
-│   ├── character.py     # Base Character class and subclasses (Warrior, Mage)
-│   ├── abilities.py     # Ability logic
-│   ├── items.py         # Item class for equipment
-│   └── main.py          # Demo script for battle simulation
-│
-├── TextAbstraction/     # Module 2: Document Builder System
-│   ├── text.py          # Container class (Composite)
-│   ├── elements.py      # Abstract base class and concrete text elements
-│   └── main.py          # Demo script for document generation
-│
-├── requirements.txt     # Project dependencies
-└── README.md            # Project documentation
+GameModel/
+├── Abilities/          # Ability logic (Spell, Melee attacks)
+│   ├── Ability.cs      # Abstract base class
+│   ├── Fireball.cs
+│   └── PowerStrike.cs
+├── Characters/         # Character definitions
+│   ├── Character.cs    # Abstract base class
+│   ├── Mage.cs
+│   └── Warrior.cs
+├── Combat/             # Combat engine
+│   └── CombatSystem.cs
+├── Items/              # Equipment and Inventory
+│   ├── Item.cs         # Abstract base class
+│   ├── Shield.cs
+│   ├── Sword.cs
+│   └── MagicAmulet.cs
+├── Logging/            # Output handling
+│   ├── ICombatLogger.cs
+│   └── ConsoleLogger.cs
+├── Program.cs          # Entry point (Simulation logic)
+└── GameModel.csproj    # Project configuration
 ```
 
----
-
-## 🧰 Setup and Run
-
-### 1️⃣ Install Python
-Ensure you have **Python 3.10+** installed:
-```bash
-python --version
-```
-
-### 2️⃣ Clone or copy the project files
-```bash
-git clone https://github.com/anatolii-dotsenko/Optima_OOP.git
-```
-
-### 3️⃣ Install dependencies
-```bash
-pip install -r requirements.txt
-```
-
-## Usage
-To run the game, execute the following command:
-```
-python module/main.py
-```
-
-
-
-## 🎮 Module 1: Game Character System. Features
-
-- Abstract base class **`Character`** defines shared attributes and behaviors.
-- Subclasses **`Warrior`** and **`Mage`** implement unique abilities.
-- **`Item`** class allows characters to equip objects that modify stats or grant abilities.
-- **`Ability`** class represents powers that characters can use in combat.
-- Fully documented with **English docstrings** using standard Python doc-comment format.
-- Modular structure (each class in its own module).
-
----
-
-## 🧱 Class Overview
-
-### `Character` (Abstract)
-Represents a base character with common stats and methods:
-- `attack(other)`
-- `heal(amount)`
-- `defend(amount)`
-- `equip(item)`
-- `use_ability(name, target)`
-- `unique_ability(target)` (must be implemented by subclasses)
-
-### `Warrior`
-- High armor and attack.
-- Unique ability: **Power Strike** (ignores armor).
-
-### `Mage`
-- Low armor, strong spells.
-- Unique ability: **Fireball** (burns the enemy).
-
-### `Item`
-- Grants stat bonuses (`bonus_health`, `bonus_attack`, `bonus_armor`).
-- Can optionally grant an `Ability`.
-
-### `Ability`
-- Represents a reusable power with a callable `effect`.
-
----
-
-## 📝 Module 2: Text Abstraction System
-
-A system for modeling and manipulating structured text documents. It focuses on **Composition** and **Polymorphism**.
-
-### Features
-- **Composite Pattern**: The `Text` class acts as a container for various elements.
-- **Polymorphic Rendering**: Each element (`Heading`, `Paragraph`, etc.) knows how to render itself differently.
-- **Dynamic Structure**: Add, remove, or reorder elements at runtime.
-- **Table of Contents**: Automatically generates a hierarchy based on headings.
-
-### Class Overview
-
-#### `Text`
-Main container that holds a list of elements.
-- `add_element(element)`: Appends an element.
-- `remove_element(index)`: Removes an element by position.
-- `move_element(from, to)`: Reorders elements.
-- `table_of_contents()`: Generates a TOC from headings.
-
-#### `TextElement` (Abstract)
-Base class for all document parts requiring a `render()` method.
-
-#### `Heading`
-Renders Markdown-style headers (e.g., `# Title`).
-
-#### `Paragraph`
-Standard text block wrapper.
-
-#### `Link` / `Image`
-Specialized elements for media and navigation.
-
----
-
-## 🛠 Concepts Applied
-- **OOP Principles**: Encapsulation, Inheritance, Polymorphism, Abstraction.
-- **Design Patterns**: Composite (Text System), Strategy (Abilities).
-- **Type Hinting**: Full Python typing support for better code quality.
+## 🚀 Getting Started
