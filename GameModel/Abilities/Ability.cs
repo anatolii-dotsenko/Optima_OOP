@@ -14,9 +14,10 @@ namespace GameModel.Abilities
         }
 
         /// <summary>
-        /// Applies the ability effect.
+        /// Applies the ability effect and returns the damage dealt.
         /// </summary>
-        public abstract void Apply(
+        /// <returns>Amount of damage dealt to the target.</returns>
+        public abstract int Apply(
             Characters.Character user, 
             Characters.Character target
         );
