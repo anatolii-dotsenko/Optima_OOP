@@ -43,16 +43,22 @@ GameModel/
 
 ## 🚀 Getting Started
 **Prerequisites**
-    .NET SDK: Ensure you have the .NET SDK installed (It was written with .NET 10.0 🤷‍♂️).
-        check with: `dotnet --version`
+* .NET SDK: Ensure you have the .NET SDK installed.
+* Check with: 
+```text 
+dotnet --version
+```
 
 **Installation**
 Clone the repository:
-`git clone https://github.com/anatolii-dotsenko/Optima_OOP/tree/main`
+```text
+ git clone https://github.com/anatolii-dotsenko/Optima_OOP/tree/main
+ ```
 Navigate to the project folder:
-`cd GameModel`
-`dotnet run`
-
+```text
+cd GameModel
+dotnet run
+```
  This will compile the project and execute the Program.cs entry point, displaying the battle simulation in the console.
 
  ## 🛠️ Usage Example
