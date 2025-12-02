@@ -8,7 +8,7 @@ namespace GameModel.Items
     public class Sword : Item
     {
         public Sword()
-            : base(name: "Iron Sword", attack: 5)
+            : base(name: "Iron Sword", attack: 4)
         {
         }
     }
