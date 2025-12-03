@@ -19,43 +19,83 @@ namespace GameModel.Combat
         /// <summary>
         /// Performs a basic attack from attacker to defender.
         /// </summary>
-        public void Attack(Character attacker, Character defender)
+        public AttackResult Attack(Character attacker, Character defender)
         {
-            var (atk, arm, _) = defender.GetFinalStats();
-            var (totalAtk, _, _) = attacker.GetFinalStats();
+            var (_, arm, _) = defender.GetFinalStats();
+            var (totalAtk, _, _) = attacker.GetFinalStats(); // Only totalAtk is used, others are discarded for clarity
 
             int damage = System.Math.Max(0, totalAtk - arm);
-
-            _logger.Write($"{attacker.Name} attacks {defender.Name} for {damage} damage.");
             defender.TakeDamage(damage);
+
+            var result = new AttackResult 
+            { 
+                AttackerName = attacker.Name, 
+                TargetName = defender.Name, 
+                Damage = damage 
+            };
+            _logger.LogAttack(result);
+            return result;
         }
 
         /// <summary>
         /// Executes an ability from user onto target.
+        /// Supports both damaging and non-damaging abilities (e.g., buffs, heals).
+        /// For non-damaging abilities, DamageDealt will be zero or negative.
         /// </summary>
-        public void UseAbility(Character user, Character target, string abilityName)
+        public AbilityResult UseAbility(Character user, Character target, string abilityName)
         {
             var ability = user.Abilities.Find(a => a.Name == abilityName);
 
             if (ability == null)
             {
-                _logger.Write($"{user.Name} does not know {abilityName}.");
-                return;
+                _logger.LogAbilityNotFound(user.Name, abilityName);
+                return new AbilityResult
+                {
+                    UserName = user.Name,
+                    AbilityName = abilityName,
+                    TargetName = target.Name,
+                    DamageDealt = 0
+                };
             }
 
-            // Apply now returns the damage dealt
             int damageDealt = ability.Apply(user, target);
-            
-            _logger.Write($"{user.Name} uses {ability.Name} on {target.Name} dealing {damageDealt} damage.");
+
+            var result = new AbilityResult
+            {
+                UserName = user.Name,
+                AbilityName = ability.Name,
+                TargetName = target.Name,
+                DamageDealt = damageDealt
+            };
+
+            if (damageDealt <= 0)
+            {
+                _logger.LogAbilityNonDamage(user.Name, ability.Name, target.Name);
+            }
+            else
+            {
+                _logger.LogAbility(result);
+            }
+
+            return result;
         }
 
         /// <summary>
-        /// Performs a healing action.
+        /// Performs a healing action on the specified character.
+        /// If the healing amount exceeds the character's missing health, only the necessary amount is restored (no overheal).
+        /// If a negative value is provided, no healing is performed and the amount is treated as zero.
         /// </summary>
-        public void Heal(Character healer, int amount)
+        public HealResult Heal(Character healer, int amount)
         {
-            healer.Heal(amount);
-            _logger.Write($"{healer.Name} heals for {amount}.");
+            int actualAmount = amount < 0 ? 0 : amount;
+            healer.Heal(actualAmount);
+            var result = new HealResult 
+            { 
+                HealerName = healer.Name, 
+                Amount = actualAmount 
+            };
+            _logger.LogHeal(result);
+            return result;
         }
     }
 }

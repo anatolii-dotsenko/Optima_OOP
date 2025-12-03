@@ -1,3 +1,5 @@
+using GameModel.Combat;
+
 namespace GameModel.Logging
 {
     /// <summary>
@@ -6,6 +8,10 @@ namespace GameModel.Logging
     /// </summary>
     public interface ICombatLogger
     {
-        void Write(string message);
+        void LogAttack(AttackResult result);
+        void LogAbility(AbilityResult result);
+        void LogAbilityNonDamage(string userName, string abilityName, string targetName);
+        void LogAbilityNotFound(string userName, string abilityName);
+        void LogHeal(HealResult result);
     }
 }
