@@ -8,7 +8,8 @@ namespace GameModel
 {
     /// <summary>
     /// Singleton holding the current game state.
-    /// Provides access to characters, combat system, and command registry.
+    /// Provides centralized access to combat system, logging, characters, and commands.
+    /// Serves as the composition root for dependency injection.
     /// </summary>
     public class GameState
     {
@@ -23,15 +24,15 @@ namespace GameModel
 
         private GameState()
         {
-            // Create composite logger for flexibility
+            // Create composite logger for multi-channel output
             var compositeLogger = new CompositeLogger();
             
-            // Add combat logger
+            // Add combat-specific logger
             var combatLogger = new ConsoleLogger();
             compositeLogger.AddCombatLogger(combatLogger);
             CombatLogger = compositeLogger;
             
-            // Add generic logger
+            // Add generic system logger
             compositeLogger.AddGenericLogger(new ConsoleLoggerGeneric());
 
             Logger = compositeLogger;
@@ -40,7 +41,7 @@ namespace GameModel
         }
 
         /// <summary>
-        /// Retrieve a character by name.
+        /// Retrieve a character by name (case-insensitive).
         /// </summary>
         public Character GetCharacter(string name)
         {

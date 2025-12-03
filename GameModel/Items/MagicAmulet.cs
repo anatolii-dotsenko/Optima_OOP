@@ -5,20 +5,26 @@ namespace GameModel.Items
 {
     /// <summary>
     /// Magical amulet that grants both stat bonuses and an ability.
-    /// Implements IAbilityProvider to separate ability-granting concern (ISP).
     /// Exposes HealthBonus as explicit property (TS compliance).
+    /// Implements IAbilityProvider to segregate ability-granting (ISP compliance).
+    /// Accepts dependency-injected ability (DIP compliance).
     /// </summary>
     public class MagicAmulet : Item, IAbilityProvider
     {
         private readonly Ability _ability;
 
+        // TS-compliant explicit property
         public override int HealthBonus => 20;
 
-        // Dependency-injected ability; caller decides which concrete Ability to provide (DIP).
+        /// <summary>
+        /// Dependency-injected ability; caller decides which concrete Ability to provide.
+        /// This satisfies the Dependency Inversion Principle while remaining flexible.
+        /// </summary>
         public MagicAmulet(Ability ability)
             : base(name: "Amulet of Flames")
         {
             _ability = ability;
+            // Also add to modifiers for consistency
             Modifiers.Add(new HealthBonus(20));
         }
 

@@ -9,6 +9,7 @@ namespace GameModel.Combat
     /// Manages the flow of turn-based combat between participants.
     /// Encapsulates battle loop logic, win conditions, and turn coordination.
     /// This is the authoritative "Coordinator" referenced in the Technical Specification.
+    /// Coordinates the flow of battle between attacker and defender autonomously.
     /// </summary>
     public class BattleManager
     {
@@ -39,6 +40,7 @@ namespace GameModel.Combat
 
         /// <summary>
         /// Starts the battle and runs the turn-based loop until a winner is determined.
+        /// This method coordinates the entire flow of battle autonomously.
         /// </summary>
         public void Start()
         {
@@ -64,6 +66,7 @@ namespace GameModel.Combat
 
         /// <summary>
         /// Executes a single turn for the current participant.
+        /// Coordinates the interaction between attacker and defender.
         /// </summary>
         private void ExecuteTurn()
         {
@@ -76,7 +79,7 @@ namespace GameModel.Combat
                 return;
             }
 
-            // Auto-action logic (can be replaced with player input or AI decision)
+            // Execute automated action for the current participant
             ExecuteAutoAction(currentParticipant);
 
             _currentTurnIndex++;
@@ -84,6 +87,7 @@ namespace GameModel.Combat
 
         /// <summary>
         /// Executes a predetermined action for the participant.
+        /// Utilizes CombatSystem to perform attacks, abilities, and healing.
         /// In a full game, this would be replaced with player input or AI decision-making.
         /// </summary>
         private void ExecuteAutoAction(Character actor)
@@ -92,27 +96,21 @@ namespace GameModel.Combat
             if (opponent == null || opponent.Health <= 0)
                 return;
 
-            // Simple AI: alternate between Attack and Ability use
-            if (_currentTurnIndex % 2 == 0)
+            // Simple AI: use abilities when available, otherwise attack
+            if (actor.Abilities.Count > 0 && _currentTurnIndex % 2 == 1)
             {
-                _combatSystem.Attack(actor, opponent);
+                var ability = actor.Abilities[_currentTurnIndex % actor.Abilities.Count];
+                _combatSystem.UseAbility(actor, opponent, ability);
             }
             else
             {
-                if (actor.Abilities.Count > 0)
-                {
-                    var ability = actor.Abilities[0];
-                    _combatSystem.UseAbility(actor, opponent, ability);
-                }
-                else
-                {
-                    _combatSystem.Attack(actor, opponent);
-                }
+                _combatSystem.Attack(actor, opponent);
             }
         }
 
         /// <summary>
         /// Determines if there are still active (alive) combatants.
+        /// Win condition check: battle continues if 2+ combatants are alive.
         /// </summary>
         private bool HasActiveCombatants()
         {
@@ -127,19 +125,20 @@ namespace GameModel.Combat
 
         /// <summary>
         /// Gets the opposing participant (assumes 1v1 for simplicity).
+        /// Can be extended for multi-participant battles.
         /// </summary>
         private Character GetOpponent(Character actor)
         {
             foreach (var participant in _participants)
             {
-                if (participant != actor)
+                if (participant != actor && participant.Health > 0)
                     return participant;
             }
             return null;
         }
 
         /// <summary>
-        /// Displays the battle result and winner.
+        /// Displays the battle result and determines the winner.
         /// </summary>
         private void DisplayBattleResult()
         {
