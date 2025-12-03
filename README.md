@@ -21,32 +21,26 @@ The solution is organized into logical namespaces and directories:
 
 ```text
 GameModel/
-├── Abilities/          # Ability logic (Spell, Melee attacks)
-│   ├── Ability.cs      # Abstract base class
-│   ├── Fireball.cs
-│   └── PowerStrike.cs
-├── Characters/         # Character definitions
-│   ├── Character.cs    # Abstract base class
-│   ├── Mage.cs
-│   └── Warrior.cs
-├── Combat/             # Combat engine
-│   └── CombatSystem.cs
-├── Items/              # Equipment and Inventory
-│   ├── Item.cs         # Abstract base class
-│   ├── Shield.cs
-│   ├── Sword.cs
-│   └── MagicAmulet.cs
-├── Logging/            # Output handling
-│   ├── ICombatLogger.cs
-│   └── ConsoleLogger.cs
-├── Text/               # Text Generation (Composite & Builder Patterns)
-│   ├── IText.cs        # Component interface
-│   ├── Container.cs    # Composite node
-│   ├── Leaf.cs         # Leaf node
-│   ├── TextFactory.cs  # Builder for document structures
-│   └── ...
-├── Game.cs             # Entry point (Simulation logic)
-└── GameModel.csproj    # Project configuration
+├── Core/                       # Core abstractions (Stable dependencies)
+│   ├── Entities/               # Base classes (Character, Item, Ability)
+│   ├── Stats/                  # Stat system (StatModifier, CharacterStats)
+│   └── Interfaces/             # System-wide contracts (ILogger, ICommand)
+├── Combat/                     # Combat Subsystem (The "Engine")
+│   ├── Actions/                # Action definitions (CombatAction)
+│   ├── Results/                # DTOs (AttackResult, HealResult)
+│   ├── BattleManager.cs        # Flow Controller (Turn logic)
+│   └── CombatSystem.cs         # Rules Engine (Calculations)
+├── Content/                    # Concrete Game Data (Volatile implementations)
+│   ├── Abilities/              # (Fireball, PowerStrike)
+│   ├── Characters/             # (Warrior, Mage)
+│   └── Items/                  # (Sword, Shield, Amulet)
+├── Infrastructure/             # External concerns
+│   ├── Logging/                # Loggers (Console, File, Composite)
+│   └── Commands/               # CLI Command System (Registry, Base Commands)
+├── Presentation/               # Output formatting & UI
+│   ├── Text/                   # Text Generation (Composite Pattern)
+│   └── Formatters/             # Message Formatters
+└── GameEngine.cs               # Main Orchestrator (Facade)
 ```
 
 ## 🚀 Getting Started
