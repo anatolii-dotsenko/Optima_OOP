@@ -3,7 +3,7 @@ using System;
 namespace GameModel.Text
 {
     /// <summary>
-    /// Базовий клас для уникнення дублювання коду ID та Name.
+    /// Base class to avoid code duplication for ID and Name.
     /// </summary>
     public abstract class TextBase : IText
     {

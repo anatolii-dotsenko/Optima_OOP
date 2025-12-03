@@ -4,12 +4,12 @@ namespace GameModel.Text
     {
         private string _content;
 
-        public Paragraph(string content) : base("paragraph") // Ім'я за замовчуванням для ліста
+        public Paragraph(string content) : base("paragraph") // Default name for the leaf
         {
             _content = content;
         }
 
-        // Перевантаження для іменованих параграфів, якщо треба
+        // Overload for named paragraphs, if needed
         public Paragraph(string name, string content) : base(name)
         {
             _content = content;

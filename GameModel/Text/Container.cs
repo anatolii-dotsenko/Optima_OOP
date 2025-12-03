@@ -33,12 +33,12 @@ namespace GameModel.Text
 
         public IText? FindChild(string nameOrId)
         {
-            // Спробуємо знайти за ID
+            // Try to find by ID
             if (Guid.TryParse(nameOrId, out Guid guid))
             {
                 return _children.FirstOrDefault(c => c.Id == guid);
             }
-            // Або за назвою (case-insensitive)
+            // Or by name (case-insensitive)
             return _children.FirstOrDefault(c => c.Name.Equals(nameOrId, StringComparison.OrdinalIgnoreCase));
         }
 

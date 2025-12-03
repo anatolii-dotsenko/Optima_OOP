@@ -30,7 +30,7 @@ namespace GameModel.Infrastructure.CLI.Commands
             {
                 SaveDate = DateTime.Now,
                 Characters = _context.Characters.Select(c => c.ToData()).ToList()
-                // Можна додати збереження items pool, якщо він змінюється динамічно
+                // Can add item pool saving if it changes dynamically
             };
 
             _repository.Save(saveData);

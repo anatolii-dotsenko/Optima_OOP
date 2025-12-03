@@ -7,6 +7,6 @@ namespace GameModel.Core.Data
     {
         public DateTime SaveDate { get; set; }
         public List<CharacterData> Characters { get; set; } = new();
-        // Можна додати інші аспекти, наприклад, стан світу або історію
+        // Other aspects can be added, for example, world state or history
     }
 }

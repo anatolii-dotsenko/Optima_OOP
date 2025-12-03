@@ -24,7 +24,7 @@ namespace GameModel.Infrastructure.Persistence
             }
             catch (Exception ex)
             {
-                // У реальному проекті тут варто використати ILogger для помилок
+                // In a real project, it is recommended to use ILogger for errors here
                 Console.WriteLine($"Failed to save game: {ex.Message}");
             }
         }

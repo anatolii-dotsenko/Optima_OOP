@@ -38,9 +38,9 @@ savegame.json
 # -----------------------------
 # NuGet Packages (Optional)
 # -----------------------------
-# Якщо ви не хочете комітити пакети, а лише відновлювати їх
+# If you don't want to commit packages, but only restore them
 *.nupkg
-# Папка packages зазвичай не комітиться, якщо використовується PackageReference (сучасний стандарт)
+# The packages folder is usually not committed if PackageReference is used (modern standard)
 packages/
 
 # -----------------------------
