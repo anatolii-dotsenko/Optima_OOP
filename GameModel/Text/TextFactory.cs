@@ -45,15 +45,19 @@ namespace GameModel.Text
         }
 
         /// <summary>
-        /// Moves the active context up to the parent container.
-        /// Effectively "closes" the current section.
+        /// Move the current context up to the parent.
+        /// Returns true when moved successfully, false if already at root.
+        /// Does not perform any I/O so callers control logging/handling.
         /// </summary>
-        public void Up()
+        public bool Up()
         {
             if (_current.Parent == null)
-                Console.WriteLine("Already at root. Cannot move up.");
-            else
-                _current = _current.Parent;
+            {
+                return false;
+            }
+
+            _current = _current.Parent;
+            return true;
         }
 
         /// <summary>
