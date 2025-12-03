@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GameModel.Combat.Results;
 
 namespace GameModel.Logging
 {
@@ -21,14 +22,14 @@ namespace GameModel.Logging
         public void AddCombatLogger(ICombatLogger logger) => _combatLoggers.Add(logger);
         public void AddGenericLogger(ILogger logger) => _genericLoggers.Add(logger);
 
-        // ...existing code for ICombatLogger interface...
-        public void LogAttack(Combat.AttackResult result)
+        // ICombatLogger implementation
+        public void LogAttack(AttackResult result)
         {
             foreach (var logger in _combatLoggers)
                 logger.LogAttack(result);
         }
 
-        public void LogAbility(Combat.AbilityResult result)
+        public void LogAbility(AbilityResult result)
         {
             foreach (var logger in _combatLoggers)
                 logger.LogAbility(result);
@@ -46,7 +47,7 @@ namespace GameModel.Logging
                 logger.LogAbilityNotFound(userName, abilityName);
         }
 
-        public void LogHeal(Combat.HealResult result)
+        public void LogHeal(HealResult result)
         {
             foreach (var logger in _combatLoggers)
                 logger.LogHeal(result);
