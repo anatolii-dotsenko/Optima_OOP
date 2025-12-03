@@ -8,8 +8,8 @@ namespace GameModel.Content.Characters
     {
         public Warrior(string name) : base(name)
         {
-            SetBaseStat(StatType.MaxHealth, 150);
-            SetBaseStat(StatType.Health, 150);
+            SetBaseStat(StatType.MaxHealth, 130);
+            SetBaseStat(StatType.Health, 130);
             SetBaseStat(StatType.Attack, 15);
             SetBaseStat(StatType.Armor, 10);
             

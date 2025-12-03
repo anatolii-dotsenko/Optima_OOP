@@ -31,6 +31,8 @@ namespace GameModel.Infrastructure.Setup
 
             var mage = new Mage("Elira");
             mage.EquipItem(new MagicAmulet());
+            mage.EquipItem(new LightningWand());
+
 
             var characters = new List<ICombatEntity> { warrior, mage };
             

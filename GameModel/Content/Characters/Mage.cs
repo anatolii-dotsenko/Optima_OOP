@@ -13,8 +13,8 @@ namespace GameModel.Content.Characters
             SetBaseStat(StatType.Attack, 5); // Low physical attack
             SetBaseStat(StatType.Armor, 2);
 
-            LearnAbility(new Fireball());
-            LearnAbility(new Lightning());
+            // LearnAbility(new Fireball());
+            // LearnAbility(new Lightning());
         }
     }
 }

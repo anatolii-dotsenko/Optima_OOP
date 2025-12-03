@@ -9,8 +9,12 @@ namespace GameModel.Content.Abilities
 
         public override int CalculateDamage(CharacterStats userStats, CharacterStats targetStats)
         {
-            // Magic damage ignores armor in this implementation
-            return 65; 
+            // Example logic: Lightning deals moderate damage but pierces some armor
+            // (Assuming magic usually ignores armor, we can add flavor here)
+            int magicPower = userStats.GetStat(StatType.Attack); // Or a specific Magic stat if added
+            
+            // Base 50 damage + scaling
+            return 50 + magicPower;
         }
     }
 }
