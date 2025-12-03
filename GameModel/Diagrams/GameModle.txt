@@ -1,0 +1,108 @@
+PROJECT STRUCTURE AND ROLES
+==================================================
+
+1. GameModel.Characters
+--------------------------------------------------
+Character (abstract)
+Role:
+  Represents any playable or non-playable fighter in the game.
+  Defines universal attributes (Health, MaxHealth, Armor, AttackPower) and universal actions (TakeDamage, Heal, EquipItem, GetFinalStats).
+Interactions:
+  - Receives Items that boost stats via EquipItem.
+  - Stores Abilities (like Fireball or PowerStrike).
+  - Is passed into CombatSystem methods (Attack, Heal, UseAbility) to perform actions.
+  - Note: Does NOT handle logging directly; pure data model.
+
+Warrior
+Role:
+  A strength-based class with higher melee attack and physical durability.
+Interactions:
+  - Inherits from Character.
+  - Benefits effectively from weapons (Sword) and armor (Shield).
+  - Initializes with the unique "Power Strike" ability.
+
+Mage
+Role:
+  A magic-based class with powerful abilities but lower armor and health.
+Interactions:
+  - Inherits from Character.
+  - Initializes with the "Fireball" ability.
+  - often benefits from magic items (MagicAmulet).
+
+2. GameModel.Items
+--------------------------------------------------
+Item (abstract)
+Role:
+  A general blueprint for all equippable items that modify character stats or grant abilities.
+Interactions:
+  - Added to a character via Character.EquipItem().
+  - Can grant Abilities (e.g., MagicAmulet grants Fireball).
+  - Used indirectly by CombatSystem when calculating final Attack/Armor/Health values.
+
+Sword
+Role:
+  An offensive item that increases physical attack.
+Interactions:
+  - Increases the character’s AttackPower.
+
+Shield
+Role:
+  A defensive item that increases armor.
+Interactions:
+  - Reduces damage taken by improving total Armor.
+
+MagicAmulet
+Role:
+  A magical item that boosts non-physical traits or grants spell-like abilities.
+Interactions:
+  - Grants a bonus ability (Fireball) and extra Health.
+
+3. GameModel.Abilities
+--------------------------------------------------
+Ability (abstract)
+Role:
+  Defines any special action a character can perform beyond a normal attack.
+Interactions:
+  - Triggered inside CombatSystem.UseAbility().
+  - Applies its effects to the target character (damage, healing, etc.) via the Apply() method.
+
+Fireball
+Role:
+  A magical damage-dealing ability.
+Interactions:
+  - Used by Mages or provided by items like the MagicAmulet.
+  - Deals fixed damage (75) regardless of armor.
+
+PowerStrike
+Role:
+  A heavy melee attack that deals extra physical damage.
+Interactions:
+  - Exclusive to the Warrior class by default.
+  - Deals double the character's total attack damage.
+
+4. GameModel.Logging
+--------------------------------------------------
+ICombatLogger (interface)
+Role:
+  Defines how combat-related actions (attacks, abilities, healing) should be logged.
+Interactions:
+  - Used by CombatSystem to record actions.
+  - Decouples the output method (Console, File, etc.) from game logic.
+
+ConsoleLogger
+Role:
+  Writes combat events specifically to the system console.
+Interactions:
+  - Implements ICombatLogger.
+  - Injected into CombatSystem at runtime.
+
+5. GameModel.Combat
+--------------------------------------------------
+CombatSystem
+Role:
+  The core engine that drives battles. Handles attacking, healing, applying abilities, and logging every action.
+Interactions:
+  - Holds a reference to ICombatLogger to record events.
+  - Performs calculations using a character’s base stats + item bonuses.
+  - Executes abilities via Ability.Apply().
+  - Coordinates the flow of battle between attacker and defender.
