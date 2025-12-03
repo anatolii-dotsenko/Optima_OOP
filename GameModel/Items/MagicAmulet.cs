@@ -8,11 +8,12 @@ namespace GameModel.Items
     /// </summary>
     public class MagicAmulet : Item
     {
-        public MagicAmulet()
+        // Dependency-injected ability; caller decides which concrete Ability to provide.
+        public MagicAmulet(Ability ability)
             : base(name: "Amulet of Flames")
         {
             Modifiers.Add(new HealthBonus(20));
-            GrantedAbility = new Fireball();
+            GrantedAbility = ability;
         }
     }
 }

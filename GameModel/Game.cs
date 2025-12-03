@@ -5,6 +5,7 @@ using GameModel.Items;
 using GameModel.Combat;
 using GameModel.Logging;
 using GameModel.Text;
+using GameModel.Abilities;
 
 namespace GameModel
 {
@@ -35,7 +36,8 @@ namespace GameModel
             // Equip items (Composition)
             thorin.EquipItem(new Sword());
             thorin.EquipItem(new Shield());
-            elira.EquipItem(new MagicAmulet());
+            // Inject the concrete ability at the composition root
+            elira.EquipItem(new MagicAmulet(new Fireball()));
 
             // Display initial state
             Console.WriteLine("=== PRE-BATTLE STATS ===");
