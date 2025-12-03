@@ -1,4 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using GameModel.Core.Contracts;
+using GameModel.Core.Data;
 using GameModel.Core.ValueObjects;
 
 namespace GameModel.Core.Entities
@@ -32,7 +36,7 @@ namespace GameModel.Core.Entities
         public void Heal(int amount)
         {
             int current = GetCurrentHealth();
-            int max = _baseStats.GetStat(StatType.MaxHealth); // Note: Items usually don't boost MaxHP dynamically in this simple model, but they could
+            int max = _baseStats.GetStat(StatType.MaxHealth); 
             _baseStats.SetStat(StatType.Health, Math.Min(max, current + amount));
         }
 
@@ -64,5 +68,18 @@ namespace GameModel.Core.Entities
         }
 
         public IEnumerable<Ability> GetAbilities() => _abilities;
+
+        // --- NEW: Export to DTO ---
+        public virtual CharacterData ToData()
+        {
+            return new CharacterData
+            {
+                Name = this.Name,
+                ClassType = this.GetType().Name,
+                CurrentHealth = this.GetCurrentHealth(),
+                BaseStats = _baseStats.ToDictionary(),
+                InventoryItems = _equipment.Select(i => i.Name).ToList()
+            };
+        }
     }
 }

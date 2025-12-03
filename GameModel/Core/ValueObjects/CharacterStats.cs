@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GameModel.Core.ValueObjects
 {
@@ -28,6 +29,12 @@ namespace GameModel.Core.ValueObjects
         {
             int current = GetStat(type);
             _stats[type] = current + delta;
+        }
+
+        // --- NEW: Method to export stats to dictionary for DTO ---
+        public Dictionary<StatType, int> ToDictionary()
+        {
+            return new Dictionary<StatType, int>(_stats);
         }
     }
 }
