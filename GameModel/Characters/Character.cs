@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using GameModel.Items;
+using GameModel.Core.Interfaces;
 
 namespace GameModel.Characters
 {
@@ -7,8 +8,9 @@ namespace GameModel.Characters
     /// Base class for all playable and non-playable characters.
     /// Responsible only for storing stats and abilities.
     /// Combat logic is handled by CombatSystem.
+    /// Implements ICombatEntity to provide contract for combat participation.
     /// </summary>
-    public abstract class Character
+    public abstract class Character : ICombatEntity
     {
         public string Name { get; }
         
@@ -16,6 +18,10 @@ namespace GameModel.Characters
         public int MaxHealth { get; protected set; }
         public int Armor { get; protected set; }
         public int AttackPower { get; protected set; }
+
+        // ICombatEntity implementations
+        public int CurrentHealth => Health;
+        public bool IsAlive => Health > 0;
 
         /// <summary>
         /// Holds all abilities that the character can use.

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using GameModel.Characters;
 using GameModel.Logging;
+using GameModel.Combat.Actions;
 
 namespace GameModel.Combat
 {
@@ -66,7 +67,6 @@ namespace GameModel.Combat
 
         /// <summary>
         /// Executes a single turn for the current participant.
-        /// Coordinates the interaction between attacker and defender.
         /// </summary>
         private void ExecuteTurn()
         {
@@ -87,8 +87,6 @@ namespace GameModel.Combat
 
         /// <summary>
         /// Executes a predetermined action for the participant.
-        /// Utilizes CombatSystem to perform attacks, abilities, and healing.
-        /// In a full game, this would be replaced with player input or AI decision-making.
         /// </summary>
         private void ExecuteAutoAction(Character actor)
         {
@@ -110,7 +108,6 @@ namespace GameModel.Combat
 
         /// <summary>
         /// Determines if there are still active (alive) combatants.
-        /// Win condition check: battle continues if 2+ combatants are alive.
         /// </summary>
         private bool HasActiveCombatants()
         {
@@ -125,7 +122,6 @@ namespace GameModel.Combat
 
         /// <summary>
         /// Gets the opposing participant (assumes 1v1 for simplicity).
-        /// Can be extended for multi-participant battles.
         /// </summary>
         private Character GetOpponent(Character actor)
         {

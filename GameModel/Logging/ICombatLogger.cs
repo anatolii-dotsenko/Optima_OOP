@@ -1,4 +1,4 @@
-using GameModel.Combat;
+using GameModel.Combat.Results;
 
 namespace GameModel.Logging
 {

@@ -1,14 +1,15 @@
 using System.Collections.Generic;
 using GameModel.Characters;
+using GameModel.Core.Interfaces;
 
 namespace GameModel.Items
 {
     /// <summary>
     /// Base class for all equippable items.
     /// Provides explicit stat bonus properties (TS compliance) and extensible modifier system (OCP).
-    /// Exposes AttackBonus, ArmorBonus, and HealthBonus as required by the Technical Specification.
+    /// Implements IStatProvider to support the modular stat system.
     /// </summary>
-    public class Item
+    public class Item : IStatProvider
     {
         public string Name { get; }
         public List<StatModifier> Modifiers { get; } = new();
@@ -40,6 +41,15 @@ namespace GameModel.Items
             {
                 modifier.Apply(stats);
             }
+        }
+
+        /// <summary>
+        /// Returns the list of modifiers this item provides.
+        /// Implements IStatProvider.
+        /// </summary>
+        public IEnumerable<StatModifier> GetModifiers()
+        {
+            return Modifiers;
         }
     }
 }

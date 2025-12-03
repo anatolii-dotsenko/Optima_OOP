@@ -1,10 +1,13 @@
 using GameModel.Abilities;
 using GameModel.Characters;
 using GameModel.Logging;
+using GameModel.Combat.Actions;
+using GameModel.Combat.Results;
 
 namespace GameModel.Combat
 {
     /// <summary>
+    /// Pure Rules Engine for combat calculations and state mutations.
     /// Handles all combat logic: attacks, defenses, ability usage.
     /// Character class stores only data, while this class performs actions.
     /// </summary>
@@ -23,7 +26,7 @@ namespace GameModel.Combat
         public AttackResult Attack(Character attacker, Character defender)
         {
             var (_, arm, _) = defender.GetFinalStats();
-            var (totalAtk, _, _) = attacker.GetFinalStats(); // Only totalAtk is used, others are discarded for clarity
+            var (totalAtk, _, _) = attacker.GetFinalStats();
 
             int damage = System.Math.Max(0, totalAtk - arm);
             defender.TakeDamage(damage);
@@ -39,9 +42,7 @@ namespace GameModel.Combat
         }
 
         /// <summary>
-        /// Executes an ability from user onto target.
-        /// Supports both damaging and non-damaging abilities (e.g., buffs, heals).
-        /// For non-damaging abilities, DamageDealt will be zero or negative.
+        /// Executes an ability from user onto target by name (legacy).
         /// </summary>
         public AbilityResult UseAbility(Character user, Character target, string abilityName)
         {
@@ -83,7 +84,6 @@ namespace GameModel.Combat
 
         /// <summary>
         /// Executes an ability by reference (type-safe, no magic strings).
-        /// Recommended over string-based UseAbility.
         /// </summary>
         public AbilityResult UseAbility(Character user, Character target, Ability ability)
         {
@@ -122,8 +122,6 @@ namespace GameModel.Combat
 
         /// <summary>
         /// Performs a healing action on the specified character.
-        /// If the healing amount exceeds the character's missing health, only the necessary amount is restored (no overheal).
-        /// If a negative value is provided, no healing is performed and the amount is treated as zero.
         /// </summary>
         public HealResult Heal(Character healer, int amount)
         {
