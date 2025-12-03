@@ -47,6 +47,7 @@ GameModel/
 │   └── ...
 ├── Game.cs             # Entry point (Simulation logic)
 └── GameModel.csproj    # Project configuration
+```
 
 ## 🚀 Getting Started
 **Prerequisites**
