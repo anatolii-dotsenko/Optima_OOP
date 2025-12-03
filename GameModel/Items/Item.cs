@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using GameModel.Abilities;
+using GameModel.Characters;
 
 namespace GameModel.Items
 {
@@ -9,25 +11,27 @@ namespace GameModel.Items
     public abstract class Item
     {
         public string Name { get; }
-
-        public int AttackBonus { get; protected set; }
-        public int ArmorBonus { get; protected set; }
-        public int HealthBonus { get; protected set; }
+        public List<StatModifier> Modifiers { get; } = new();
 
         public Ability? GrantedAbility { get; protected set; }
 
         protected Item(
             string name, 
-            int attack = 0, 
-            int armor = 0, 
-            int health = 0, 
             Ability? ability = null)
         {
             Name = name;
-            AttackBonus = attack;
-            ArmorBonus = armor;
-            HealthBonus = health;
             GrantedAbility = ability;
+        }
+
+        /// <summary>
+        /// Applies all modifiers to the given stats.
+        /// </summary>
+        public void ApplyModifiers(CharacterStats stats)
+        {
+            foreach (var modifier in Modifiers)
+            {
+                modifier.Apply(stats);
+            }
         }
     }
 }

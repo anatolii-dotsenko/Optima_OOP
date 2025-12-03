@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using GameModel.Items;
 
 namespace GameModel.Characters
 {
@@ -64,22 +65,18 @@ namespace GameModel.Characters
         }
 
         /// <summary>
-        /// Calculates total stats including equipment bonuses.
+        /// Calculates final stats by applying all equipped item modifiers to base stats.
         /// </summary>
-        public (int TotalAttack, int TotalArmor, int TotalMaxHealth) GetFinalStats()
+        public (int attack, int armor, int health) GetFinalStats()
         {
-            int totalAtk = AttackPower;
-            int totalArm = Armor;
-            int totalHp = MaxHealth;
+            var stats = _baseStats.Copy();
 
-            foreach (var item in Equipment)
+            foreach (var item in EquippedItems)
             {
-                totalAtk += item.AttackBonus;
-                totalArm += item.ArmorBonus;
-                totalHp += item.HealthBonus;
+                item.ApplyModifiers(stats);
             }
 
-            return (totalAtk, totalArm, totalHp);
+            return (stats.Attack, stats.Armor, stats.Health);
         }
     }
 }
