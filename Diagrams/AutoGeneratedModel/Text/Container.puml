@@ -1,13 +1,14 @@
 @startuml
-abstract class Container {
-    # _name : string
-    # Container(name:string, parent:Container?)
+class Container {
+    + Container(name:string, parent:Container?)
     + AddChild(child:IText) : void
-    + {abstract} Render() : string
+    + RemoveChild(nameOrId:string) : bool
+    + FindChild(nameOrId:string) : IText?
+    + GetChildren() : IEnumerable<IText>
+    + <<override>> Render() : string
 }
 class "List`1"<T> {
 }
-IText <|-- Container
+TextBase <|-- Container
 Container o-> "_children<IText>" "List`1"
-Container --> "Parent" Container
 @enduml

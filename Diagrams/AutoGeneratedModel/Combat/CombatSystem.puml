@@ -1,9 +1,0 @@
-@startuml
-class CombatSystem {
-    + CombatSystem(logger:ICombatLogger)
-    + Attack(attacker:Character, defender:Character) : void
-    + UseAbility(user:Character, target:Character, abilityName:string) : void
-    + Heal(healer:Character, amount:int) : void
-}
-CombatSystem --> "_logger" ICombatLogger
-@enduml

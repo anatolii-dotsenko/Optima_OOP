@@ -1,0 +1,7 @@
+@startuml
+interface ICommand {
+    Keyword : string <<get>>
+    Description : string <<get>>
+    Execute(args:string[], options:Dictionary<string, string>) : void
+}
+@enduml

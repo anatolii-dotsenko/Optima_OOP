@@ -1,8 +1,9 @@
 @startuml
-abstract class Leaf {
-    # _content : string?
-    # Leaf(content:string)
-    + {abstract} Render() : string
+class Paragraph {
+    - _content : string
+    + Paragraph(content:string)
+    + Paragraph(name:string, content:string)
+    + <<override>> Render() : string
 }
-IText <|-- Leaf
+TextBase <|-- Paragraph
 @enduml

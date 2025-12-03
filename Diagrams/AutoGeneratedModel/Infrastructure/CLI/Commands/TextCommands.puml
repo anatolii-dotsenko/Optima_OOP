@@ -1,0 +1,51 @@
+@startuml
+class AddTextCommand {
+    + Keyword : string <<get>>
+    + Description : string <<get>>
+    + AddTextCommand(context:DocumentContext, factory:TextFactory)
+    + Execute(args:string[], options:Dictionary<string, string>) : void
+}
+class PrintCommand {
+    + Keyword : string <<get>>
+    + Description : string <<get>>
+    + PrintCommand(context:DocumentContext)
+    + Execute(args:string[], options:Dictionary<string, string>) : void
+}
+class PwdCommand {
+    + Keyword : string <<get>>
+    + Description : string <<get>>
+    + PwdCommand(context:DocumentContext)
+    + Execute(args:string[], options:Dictionary<string, string>) : void
+}
+class UpCommand {
+    + Keyword : string <<get>>
+    + Description : string <<get>>
+    + UpCommand(context:DocumentContext)
+    + Execute(args:string[], options:Dictionary<string, string>) : void
+}
+class RmCommand {
+    + Keyword : string <<get>>
+    + Description : string <<get>>
+    + RmCommand(context:DocumentContext)
+    + Execute(args:string[], options:Dictionary<string, string>) : void
+}
+class ChangeDirCommand {
+    + Keyword : string <<get>>
+    + Description : string <<get>>
+    + ChangeDirCommand(context:DocumentContext)
+    + Execute(args:string[], options:Dictionary<string, string>) : void
+}
+ICommand <|-- AddTextCommand
+AddTextCommand --> "_context" DocumentContext
+AddTextCommand --> "_factory" TextFactory
+ICommand <|-- PrintCommand
+PrintCommand --> "_context" DocumentContext
+ICommand <|-- PwdCommand
+PwdCommand --> "_context" DocumentContext
+ICommand <|-- UpCommand
+UpCommand --> "_context" DocumentContext
+ICommand <|-- RmCommand
+RmCommand --> "_context" DocumentContext
+ICommand <|-- ChangeDirCommand
+ChangeDirCommand --> "_context" DocumentContext
+@enduml

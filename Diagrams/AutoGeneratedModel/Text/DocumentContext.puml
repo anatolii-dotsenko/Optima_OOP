@@ -1,0 +1,7 @@
+@startuml
+class DocumentContext {
+    + DocumentContext()
+}
+DocumentContext --> "Root" Root
+DocumentContext --> "CurrentContainer" Container
+@enduml

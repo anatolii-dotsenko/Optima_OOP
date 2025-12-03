@@ -1,7 +1,0 @@
-@startuml
-class Program {
-    {static} - Main(args:string[]) : void
-    {static} - CheckIfDead(c1:Character, c2:Character) : bool
-    {static} - PrintCharacterInfo(c:Character) : void
-}
-@enduml

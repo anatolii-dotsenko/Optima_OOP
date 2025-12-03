@@ -1,0 +1,30 @@
+@startuml
+class CreateCommand {
+    + Keyword : string <<get>>
+    + Description : string <<get>>
+    + CreateCommand(context:WorldContext)
+    + Execute(args:string[], options:Dictionary<string, string>) : void
+}
+class EquipCommand {
+    + Keyword : string <<get>>
+    + Description : string <<get>>
+    + EquipCommand(context:WorldContext)
+    + Execute(args:string[], options:Dictionary<string, string>) : void
+}
+class LsCommand {
+    + Keyword : string <<get>>
+    + Description : string <<get>>
+    + LsCommand(context:WorldContext)
+    + Execute(args:string[], options:Dictionary<string, string>) : void
+}
+class "Dictionary`2"<T1,T2> {
+}
+ICommand <|-- CreateCommand
+CreateCommand --> "_context" WorldContext
+CreateCommand --> "_characterFactories<string,Func<string, Character>>" "Dictionary`2"
+CreateCommand --> "_itemFactories<string,Func<Item>>" "Dictionary`2"
+ICommand <|-- EquipCommand
+EquipCommand --> "_context" WorldContext
+ICommand <|-- LsCommand
+LsCommand --> "_context" WorldContext
+@enduml

@@ -1,0 +1,6 @@
+@startuml
+class LightningWand {
+    + LightningWand()
+}
+Item <|-- LightningWand
+@enduml

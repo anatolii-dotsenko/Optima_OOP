@@ -1,0 +1,7 @@
+@startuml
+class Fireball {
+    + Fireball()
+    + <<override>> CalculateDamage(userStats:CharacterStats, targetStats:CharacterStats) : int
+}
+Ability <|-- Fireball
+@enduml

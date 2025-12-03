@@ -1,0 +1,10 @@
+@startuml
+class CharacterSession {
+    + ModeName : string <<get>>
+    + CharacterSession(registry:CommandRegistry)
+    + PrintHelp() : void
+    + ExecuteCommand(command:string, args:string[], options:Dictionary<string, string>) : void
+}
+ICliSession <|-- CharacterSession
+CharacterSession --> "_registry" CommandRegistry
+@enduml

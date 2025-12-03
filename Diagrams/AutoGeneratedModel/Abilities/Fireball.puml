@@ -1,7 +1,0 @@
-@startuml
-class Fireball {
-    + Fireball()
-    + <<override>> Apply(user:Character, target:Character) : int
-}
-Ability <|-- Fireball
-@enduml

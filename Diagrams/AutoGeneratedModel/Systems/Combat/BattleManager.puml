@@ -1,0 +1,13 @@
+@startuml
+class BattleManager {
+    + BattleManager(combatSystem:ICombatSystem, logger:ICombatLogger)
+    + AddParticipant(entity:ICombatEntity) : void
+    + StartBattle() : void
+    - TakeTurn(attacker:ICombatEntity, target:ICombatEntity) : void
+}
+class "List`1"<T> {
+}
+BattleManager --> "_combatSystem" ICombatSystem
+BattleManager --> "_logger" ICombatLogger
+BattleManager o-> "_participants<ICombatEntity>" "List`1"
+@enduml

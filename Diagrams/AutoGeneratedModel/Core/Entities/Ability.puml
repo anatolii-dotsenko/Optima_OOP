@@ -2,6 +2,6 @@
 abstract class Ability {
     + Name : string <<get>>
     # Ability(name:string)
-    + {abstract} Apply(user:Characters.Character, target:Characters.Character) : int
+    + {abstract} CalculateDamage(userStats:CharacterStats, targetStats:CharacterStats) : int
 }
 @enduml

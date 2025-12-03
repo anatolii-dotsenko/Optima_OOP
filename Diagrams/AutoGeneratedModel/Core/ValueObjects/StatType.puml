@@ -1,0 +1,10 @@
+@startuml
+enum StatType {
+    Health,
+    MaxHealth,
+    Attack,
+    Armor,
+    Mana,
+    Speed,
+}
+@enduml

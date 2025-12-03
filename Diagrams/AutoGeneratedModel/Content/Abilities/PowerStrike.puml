@@ -1,0 +1,7 @@
+@startuml
+class PowerStrike {
+    + PowerStrike()
+    + <<override>> CalculateDamage(userStats:CharacterStats, targetStats:CharacterStats) : int
+}
+Ability <|-- PowerStrike
+@enduml

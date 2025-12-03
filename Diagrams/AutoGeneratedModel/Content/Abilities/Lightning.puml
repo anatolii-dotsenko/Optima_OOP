@@ -1,0 +1,7 @@
+@startuml
+class Lightning {
+    + Lightning()
+    + <<override>> CalculateDamage(userStats:CharacterStats, targetStats:CharacterStats) : int
+}
+Ability <|-- Lightning
+@enduml

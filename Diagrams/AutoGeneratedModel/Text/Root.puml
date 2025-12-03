@@ -1,7 +1,6 @@
 @startuml
 class Root {
     + Root(name:string)
-    + IsRoot() : bool
     + <<override>> Render() : string
 }
 Container <|-- Root

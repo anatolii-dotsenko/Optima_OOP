@@ -1,0 +1,10 @@
+@startuml
+class HelpCommand {
+    + Keyword : string <<get>>
+    + Description : string <<get>>
+    + HelpCommand(registry:CommandRegistry)
+    + Execute(args:string[], options:Dictionary<string, string>) : void
+}
+ICommand <|-- HelpCommand
+HelpCommand --> "_registry" CommandRegistry
+@enduml

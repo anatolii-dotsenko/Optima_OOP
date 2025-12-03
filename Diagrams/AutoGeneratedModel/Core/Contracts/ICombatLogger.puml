@@ -1,0 +1,8 @@
+@startuml
+interface ICombatLogger {
+    LogAttack(result:AttackResult) : void
+    LogAbility(result:AbilityResult) : void
+    LogHeal(result:HealResult) : void
+    LogMessage(message:string) : void
+}
+@enduml

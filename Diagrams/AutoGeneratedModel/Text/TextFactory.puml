@@ -1,10 +1,9 @@
 @startuml
-class TextFactory {
-    + TextFactory(title:string)
-    + AddHeading(name:string, rank:int) : void
-    + AddParagraph(content:string) : void
-    + Up() : void
-    + <<override>> ToString() : string
+enum TextType {
+    Heading,
+    Paragraph,
 }
-TextFactory --> "_current" Container
+class TextFactory {
+    + AddElement(context:DocumentContext, type:TextType, nameOrContent:string) : void
+}
 @enduml
