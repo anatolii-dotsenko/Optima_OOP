@@ -142,7 +142,7 @@ namespace GameModel
         static void PrintCharacterInfo(Character c)
         {
             // Fetch calculated stats (Base + Equipment)
-            var stats = c.GetFinalStats();
+            var (atk, arm, maxHp) = c.GetFinalStats();
             
             // Format equipment list
             string items = c.Equipment.Any() 
@@ -153,9 +153,9 @@ namespace GameModel
 
             Console.WriteLine($"Name:   {c.Name} ({c.GetType().Name})");
             Console.WriteLine($"Status: {status}");
-            Console.WriteLine($"HP:     {Math.Max(0, c.Health)}/{stats.TotalMaxHealth}");
-            Console.WriteLine($"Atk:    {stats.TotalAttack}");
-            Console.WriteLine($"Arm:    {stats.TotalArmor}");
+            Console.WriteLine($"HP:     {System.Math.Max(0, c.Health)}/{maxHp}");
+            Console.WriteLine($"Atk:    {atk}");
+            Console.WriteLine($"Arm:    {arm}");
             Console.WriteLine($"Items:  {items}");
             Console.WriteLine(new string('-', 20));
         }

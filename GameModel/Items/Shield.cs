@@ -1,4 +1,5 @@
 using GameModel.Abilities;
+using GameModel.Characters;
 
 namespace GameModel.Items
 {
@@ -8,8 +9,9 @@ namespace GameModel.Items
     public class Shield : Item
     {
         public Shield()
-            : base(name: "Knight Shield", armor: 4)
+            : base(name: "Knight Shield")
         {
+            Modifiers.Add(new ArmorBonus(4));
         }
     }
 }

@@ -5,22 +5,18 @@ using GameModel.Characters;
 namespace GameModel.Items
 {
     /// <summary>
-    /// Base class for all items.
-    /// For advanced systems you can derive Weapon, Armor, Amulet, etc.
+    /// Represents an equippable item with extensible stat modifiers.
+    /// New stat types can be added via StatModifier subclasses without modifying this class.
     /// </summary>
-    public abstract class Item
+    public class Item
     {
         public string Name { get; }
         public List<StatModifier> Modifiers { get; } = new();
+        public Ability GrantedAbility { get; protected set; }
 
-        public Ability? GrantedAbility { get; protected set; }
-
-        protected Item(
-            string name, 
-            Ability? ability = null)
+        public Item(string name)
         {
             Name = name;
-            GrantedAbility = ability;
         }
 
         /// <summary>

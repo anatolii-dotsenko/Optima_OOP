@@ -1,4 +1,5 @@
 using GameModel.Abilities;
+using GameModel.Characters;
 
 namespace GameModel.Items
 {
@@ -8,8 +9,9 @@ namespace GameModel.Items
     public class Sword : Item
     {
         public Sword()
-            : base(name: "Iron Sword", attack: 12)
+            : base(name: "Iron Sword")
         {
+            Modifiers.Add(new AttackBonus(12));
         }
     }
 }

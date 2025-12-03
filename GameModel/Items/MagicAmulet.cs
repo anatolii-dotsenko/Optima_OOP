@@ -1,3 +1,4 @@
+using GameModel.Characters;
 using GameModel.Abilities;
 
 namespace GameModel.Items
@@ -8,8 +9,10 @@ namespace GameModel.Items
     public class MagicAmulet : Item
     {
         public MagicAmulet()
-            : base(name: "Amulet of Flames", health: 20, ability: new Fireball())
+            : base(name: "Amulet of Flames")
         {
+            Modifiers.Add(new HealthBonus(20));
+            GrantedAbility = new Fireball();
         }
     }
 }

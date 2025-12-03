@@ -2,22 +2,43 @@ namespace GameModel.Combat
 {
     public class AttackResult
     {
-        public string AttackerName { get; set; }
-        public string TargetName { get; set; }
+        public required string AttackerName { get; set; }
+        public required string TargetName { get; set; }
         public int Damage { get; set; }
+
+        public AttackResult(string attackerName, string targetName, int damage)
+        {
+            AttackerName = attackerName;
+            TargetName = targetName;
+            Damage = damage;
+        }
     }
 
     public class AbilityResult
     {
-        public string UserName { get; set; }
-        public string AbilityName { get; set; }
-        public string TargetName { get; set; }
+        public required string UserName { get; set; }
+        public required string AbilityName { get; set; }
+        public required string TargetName { get; set; }
         public int DamageDealt { get; set; }
+
+        public AbilityResult(string userName, string abilityName, string targetName, int damageDealt)
+        {
+            UserName = userName;
+            AbilityName = abilityName;
+            TargetName = targetName;
+            DamageDealt = damageDealt;
+        }
     }
 
     public class HealResult
     {
-        public string HealerName { get; set; }
+        public required string HealerName { get; set; }
         public int Amount { get; set; }
+
+        public HealResult(string healerName, int amount)
+        {
+            HealerName = healerName;
+            Amount = amount;
+        }
     }
 }

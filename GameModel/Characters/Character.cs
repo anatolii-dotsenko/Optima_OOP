@@ -69,9 +69,9 @@ namespace GameModel.Characters
         /// </summary>
         public (int attack, int armor, int health) GetFinalStats()
         {
-            var stats = _baseStats.Copy();
+            var stats = new CharacterStats(AttackPower, Armor, MaxHealth);
 
-            foreach (var item in EquippedItems)
+            foreach (var item in Equipment)
             {
                 item.ApplyModifiers(stats);
             }
