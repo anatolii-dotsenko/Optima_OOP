@@ -60,8 +60,11 @@ namespace GameModel.Characters
         {
             Equipment.Add(item);
 
-            if (item.GrantedAbility != null)
-                Abilities.Add(item.GrantedAbility);
+            // Check if item grants an ability via the segregated interface
+            if (item is IAbilityProvider abilityProvider)
+            {
+                Abilities.Add(abilityProvider.GetAbility());
+            }
         }
 
         /// <summary>

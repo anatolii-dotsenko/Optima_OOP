@@ -26,9 +26,10 @@ namespace GameModel
             var gameState = GameState.Instance;
             gameState.CommandRegistry.RegisterCommands();
 
-            // Setup characters
+            // Create characters
             Warrior thorin = new Warrior("Thorin");
-            Mage elira = new Mage("Elira");
+            // Inject the starting ability via constructor (DIP)
+            Mage elira = new Mage("Elira", new Fireball());
 
             thorin.EquipItem(new Sword());
             thorin.EquipItem(new Shield());

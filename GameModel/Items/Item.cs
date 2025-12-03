@@ -1,18 +1,16 @@
 using System.Collections.Generic;
-using GameModel.Abilities;
 using GameModel.Characters;
 
 namespace GameModel.Items
 {
     /// <summary>
-    /// Represents an equippable item with extensible stat modifiers.
-    /// New stat types can be added via StatModifier subclasses without modifying this class.
+    /// Base class for all equippable items.
+    /// Responsible only for stat modifiers, not ability granting.
     /// </summary>
     public class Item
     {
         public string Name { get; }
         public List<StatModifier> Modifiers { get; } = new();
-        public Ability? GrantedAbility { get; protected set; }
 
         public Item(string name)
         {

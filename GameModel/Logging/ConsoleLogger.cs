@@ -5,32 +5,40 @@ namespace GameModel.Logging
 {
     /// <summary>
     /// Simple implementation that logs to the console.
+    /// Delegates formatting to CombatFormatter (SRP).
     /// </summary>
     public class ConsoleLogger : ICombatLogger
     {
+        private readonly CombatFormatter _formatter;
+
+        public ConsoleLogger()
+        {
+            _formatter = new CombatFormatter();
+        }
+
         public void LogAttack(AttackResult result)
         {
-            Console.WriteLine($"{result.AttackerName} attacks {result.TargetName} for {result.Damage} damage.");
+            Console.WriteLine(_formatter.FormatAttack(result));
         }
 
         public void LogAbility(AbilityResult result)
         {
-            Console.WriteLine($"{result.UserName} uses {result.AbilityName} on {result.TargetName} dealing {result.DamageDealt} damage.");
+            Console.WriteLine(_formatter.FormatAbility(result));
         }
 
         public void LogAbilityNonDamage(string userName, string abilityName, string targetName)
         {
-            Console.WriteLine($"{userName} uses {abilityName} on {targetName}.");
+            Console.WriteLine(_formatter.FormatAbilityNonDamage(userName, abilityName, targetName));
         }
 
         public void LogAbilityNotFound(string userName, string abilityName)
         {
-            Console.WriteLine($"{userName} does not know {abilityName}.");
+            Console.WriteLine(_formatter.FormatAbilityNotFound(userName, abilityName));
         }
 
         public void LogHeal(HealResult result)
         {
-            Console.WriteLine($"{result.HealerName} heals for {result.Amount}.");
+            Console.WriteLine(_formatter.FormatHeal(result));
         }
     }
 }
