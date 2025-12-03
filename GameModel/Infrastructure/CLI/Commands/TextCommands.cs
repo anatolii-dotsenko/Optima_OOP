@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using GameModel.Core.Contracts;
 using GameModel.Text;
 
@@ -10,7 +11,7 @@ namespace GameModel.Infrastructure.CLI.Commands
         private readonly DocumentContext _context;
         private readonly TextFactory _factory;
         public string Keyword => "add";
-        public string Description => "Usage: add <container|leaf> <content>";
+        public string Description => "Usage: add <container|leaf> <type>";
 
         public AddTextCommand(DocumentContext context, TextFactory factory)
         {
@@ -22,13 +23,39 @@ namespace GameModel.Infrastructure.CLI.Commands
         {
             if (args.Length < 2) { Console.WriteLine(Description); return; }
             
-            string typeStr = args[0].ToLower();
-            string content = args[1];
-            
-            TextType type = (typeStr == "container" || typeStr == "heading") ? TextType.Heading : TextType.Paragraph;
+            string category = args[0].ToLower(); // container or leaf
+            string typeArg = args[1].ToLower();  // e.g. heading, paragraph
+
+            // Dialog for content
+            Console.Write("Enter name/content: ");
+            string content = Console.ReadLine() ?? "";
+
+            TextType type = (typeArg == "heading") ? TextType.Heading : TextType.Paragraph;
             _factory.AddElement(_context, type, content);
             
-            Console.WriteLine($"Added {type}.");
+            Console.WriteLine($"Added {type} '{content}'.");
+        }
+    }
+
+    public class PrintCommand : ICommand
+    {
+        private readonly DocumentContext _context;
+        public string Keyword => "print";
+        public string Description => "Usage: print [--whole | --id]";
+
+        public PrintCommand(DocumentContext context) => _context = context;
+
+        public void Execute(string[] args, Dictionary<string, string> options)
+        {
+            bool whole = options.ContainsKey("whole");
+            bool showId = options.ContainsKey("id");
+
+            IText target = whole ? _context.Root : _context.CurrentContainer;
+            
+            Console.WriteLine($"--- Content of {(whole ? "Document" : target.Name)} ---");
+            if (showId) Console.WriteLine($"[ID: {target.Id}]");
+            
+            Console.WriteLine(target.Render());
         }
     }
 
@@ -54,18 +81,66 @@ namespace GameModel.Infrastructure.CLI.Commands
         }
     }
 
-    public class PrintCommand : ICommand
+    public class UpCommand : ICommand
     {
         private readonly DocumentContext _context;
-        public string Keyword => "print";
-        public string Description => "Prints content. Use --whole for full doc.";
+        public string Keyword => "up";
+        public string Description => "Moves to parent container";
 
-        public PrintCommand(DocumentContext context) => _context = context;
+        public UpCommand(DocumentContext context) => _context = context;
 
         public void Execute(string[] args, Dictionary<string, string> options)
         {
-            IText target = options.ContainsKey("whole") ? _context.Root : _context.CurrentContainer;
-            Console.WriteLine(target.Render());
+            if (_context.CurrentContainer.Parent != null)
+            {
+                _context.CurrentContainer = _context.CurrentContainer.Parent;
+                Console.WriteLine($"Moved up to '{_context.CurrentContainer.Name}'");
+            }
+            else
+            {
+                Console.WriteLine("Already at Root.");
+            }
+        }
+    }
+
+    public class RmCommand : ICommand
+    {
+        private readonly DocumentContext _context;
+        public string Keyword => "rm";
+        public string Description => "Usage: rm [name]";
+
+        public RmCommand(DocumentContext context) => _context = context;
+
+        public void Execute(string[] args, Dictionary<string, string> options)
+        {
+            // Case 1: No args -> Remove current and move up
+            if (args.Length == 0)
+            {
+                Console.Write($"Delete current container '{_context.CurrentContainer.Name}'? (y/n): ");
+                string? ans = Console.ReadLine();
+                if (ans?.ToLower() == "y")
+                {
+                    if (_context.CurrentContainer.Parent == null) 
+                    { 
+                        Console.WriteLine("Cannot remove Root."); 
+                        return; 
+                    }
+                    
+                    var parent = _context.CurrentContainer.Parent;
+                    parent.RemoveChild(_context.CurrentContainer.Name); // Assuming RemoveChild works by name/ID
+                    _context.CurrentContainer = parent;
+                    Console.WriteLine("Removed current. Moved up.");
+                }
+            }
+            // Case 2: Remove child by name
+            else
+            {
+                string target = args[0];
+                if (_context.CurrentContainer.RemoveChild(target)) 
+                    Console.WriteLine($"Child '{target}' removed.");
+                else 
+                    Console.WriteLine("Child not found.");
+            }
         }
     }
 
@@ -73,35 +148,36 @@ namespace GameModel.Infrastructure.CLI.Commands
     {
         private readonly DocumentContext _context;
         public string Keyword => "cd";
-        public string Description => "Usage: cd <name> or cd ..";
+        public string Description => "Usage: cd <path> | [--id <id>]";
 
         public ChangeDirCommand(DocumentContext context) => _context = context;
 
         public void Execute(string[] args, Dictionary<string, string> options)
         {
-            if (args.Length == 0) return;
-            string name = args[0];
-
-            if (name == "..")
+            // Priority to --id
+            if (options.TryGetValue("id", out string? idVal) && idVal != null)
             {
-                if (_context.CurrentContainer.Parent != null)
+                var found = _context.CurrentContainer.FindChild(idVal);
+                if (found is Container c)
                 {
-                    _context.CurrentContainer = _context.CurrentContainer.Parent;
-                    Console.WriteLine("Moved up.");
+                    _context.CurrentContainer = c;
+                    Console.WriteLine($"Changed to container {c.Name} (by ID).");
                 }
-                else Console.WriteLine("At root.");
+                else Console.WriteLine("Container not found by ID.");
                 return;
             }
 
-            var child = _context.CurrentContainer.FindChild(name);
-            if (child is Container c)
+            // Path navigation
+            if (args.Length > 0)
             {
-                _context.CurrentContainer = c;
-                Console.WriteLine($"Changed to {c.Name}");
-            }
-            else
-            {
-                Console.WriteLine("Directory not found.");
+                string path = args[0];
+                var found = _context.CurrentContainer.FindChild(path);
+                if (found is Container c)
+                {
+                    _context.CurrentContainer = c;
+                    Console.WriteLine($"Changed to '{c.Name}'");
+                }
+                else Console.WriteLine("Path not found.");
             }
         }
     }

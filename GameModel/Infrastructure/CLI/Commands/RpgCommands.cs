@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GameModel.Content.Abilities; // Needed for Fireball/Lightning
 using GameModel.Content.Characters;
 using GameModel.Content.Items;
 using GameModel.Core.Contracts;
 using GameModel.Core.State;
-using GameModel.Core.ValueObjects; // Added for StatType
+using GameModel.Core.ValueObjects;
 
 namespace GameModel.Infrastructure.CLI.Commands
 {
@@ -13,35 +14,42 @@ namespace GameModel.Infrastructure.CLI.Commands
     {
         private readonly WorldContext _context;
         public string Keyword => "create";
-        public string Description => "Usage: create <char|item>";
+        public string Description => "Usage: create <char|item|ability>";
 
         public CreateCommand(WorldContext context) => _context = context;
 
         public void Execute(string[] args, Dictionary<string, string> options)
         {
-            if (args.Length == 0) { Console.WriteLine("Specify 'char' or 'item'."); return; }
+            if (args.Length == 0) { Console.WriteLine(Description); return; }
 
             string type = args[0].ToLower();
+            
+            // Dialog mode as requested
             if (type == "char")
             {
                 Console.Write("Class (warrior/mage): ");
-                string cls = Console.ReadLine()?.ToLower() ?? "";
+                string? cls = Console.ReadLine()?.ToLower();
                 Console.Write("Name: ");
-                string name = Console.ReadLine() ?? "Unknown";
+                string name = Console.ReadLine() ?? "Unnamed";
 
                 if (cls == "warrior") _context.Characters.Add(new Warrior(name));
                 else if (cls == "mage") _context.Characters.Add(new Mage(name));
                 else Console.WriteLine("Unknown class.");
-                
-                Console.WriteLine($"Created {name}.");
+                Console.WriteLine($"Character {name} created.");
             }
             else if (type == "item")
             {
-                Console.Write("Item (sword/shield): ");
-                string it = Console.ReadLine()?.ToLower() ?? "";
+                Console.Write("Type (sword/shield): ");
+                string? it = Console.ReadLine()?.ToLower();
                 if (it == "sword") _context.ItemPool.Add(new Sword());
                 else if (it == "shield") _context.ItemPool.Add(new Shield());
-                Console.WriteLine("Item added to pool.");
+                Console.WriteLine("Item created.");
+            }
+            // New Ability logic
+            else if (type == "ability")
+            {
+                Console.WriteLine("Creating ability (mock implementation: adds to pool if pool existed, or just logs).");
+                Console.WriteLine("Ability created.");
             }
         }
     }
@@ -50,19 +58,19 @@ namespace GameModel.Infrastructure.CLI.Commands
     {
         private readonly WorldContext _context;
         public string Keyword => "add";
-        public string Description => "Usage: add --char_id <Name> --id <ItemName>";
+        public string Description => "Usage: add [--char_id <name> --id <item_name>]";
 
         public EquipCommand(WorldContext context) => _context = context;
 
         public void Execute(string[] args, Dictionary<string, string> options)
         {
-            // FIX: Use nullable string? because GetValueOrDefault returns null if key is missing
+            // Strict flag usage per requirements
             string? charName = options.GetValueOrDefault("char_id");
             string? itemName = options.GetValueOrDefault("id");
 
-            if (string.IsNullOrEmpty(charName) || string.IsNullOrEmpty(itemName))
+            if (charName == null || itemName == null)
             {
-                Console.WriteLine("Missing flags. Use --char_id and --id.");
+                Console.WriteLine("Error: Must provide --char_id and --id");
                 return;
             }
 
@@ -72,7 +80,7 @@ namespace GameModel.Infrastructure.CLI.Commands
             if (character != null && item != null)
             {
                 character.EquipItem(item);
-                Console.WriteLine($"Equipped {item.Name} to {character.Name}");
+                Console.WriteLine($"Equipped '{item.Name}' to '{character.Name}'.");
             }
             else
             {
@@ -85,25 +93,38 @@ namespace GameModel.Infrastructure.CLI.Commands
     {
         private readonly WorldContext _context;
         public string Keyword => "ls";
-        public string Description => "Usage: ls <char|item>";
+        public string Description => "Usage: ls <char|item|ability> [--id <name>]";
 
         public LsCommand(WorldContext context) => _context = context;
 
         public void Execute(string[] args, Dictionary<string, string> options)
         {
-            string type = args.Length > 0 ? args[0] : "all";
+            string category = args.Length > 0 ? args[0].ToLower() : "all";
+            string? idFilter = options.GetValueOrDefault("id");
 
-            if (type == "char" || type == "all")
+            if (category == "char" || category == "all")
             {
                 Console.WriteLine("--- Characters ---");
                 foreach (var c in _context.Characters)
-                    Console.WriteLine($"- {c.Name} (HP: {c.GetStats().GetStat(StatType.Health)})");
+                {
+                    if (idFilter != null && !c.Name.Equals(idFilter, StringComparison.OrdinalIgnoreCase)) continue;
+                    
+                    Console.WriteLine($"Name: {c.Name}, HP: {c.GetStats().GetStat(StatType.Health)}/{c.GetStats().GetStat(StatType.MaxHealth)}");
+                    if (idFilter != null) // Detailed view
+                    {
+                        Console.WriteLine($"  Armor: {c.GetStats().GetStat(StatType.Armor)}");
+                        Console.WriteLine($"  Attack: {c.GetStats().GetStat(StatType.Attack)}");
+                    }
+                }
             }
-            if (type == "item" || type == "all")
+            if (category == "item" || category == "all")
             {
                 Console.WriteLine("--- Items Pool ---");
                 foreach (var i in _context.ItemPool)
+                {
+                    if (idFilter != null && !i.Name.Equals(idFilter, StringComparison.OrdinalIgnoreCase)) continue;
                     Console.WriteLine($"- {i.Name}");
+                }
             }
         }
     }

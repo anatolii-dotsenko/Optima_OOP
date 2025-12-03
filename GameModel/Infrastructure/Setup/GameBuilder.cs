@@ -13,45 +13,44 @@ namespace GameModel.Infrastructure.Setup
 {
     public class GameBuilder
     {
-        /// <summary>
-        /// Builds the game environment and returns the necessary contexts and registry.
-        /// </summary>
-        public (CommandRegistry, WorldContext, DocumentContext) Build()
+        public (CommandRegistry textReg, CommandRegistry charReg, WorldContext, DocumentContext) Build()
         {
-            // 1. Shared Infrastructure
-            var registry = new CommandRegistry();
+            // --- Shared Infrastructure ---
             var logger = new CompositeLogger();
             logger.Add(new ConsoleLogger());
             
-            // 2. RPG System & State
+            // --- 1. RPG Setup ---
             var worldContext = new WorldContext();
             ICombatSystem combatSystem = new CombatSystem(logger);
             
             // Seed Data
-            var warrior = new Warrior("Thorin");
-            worldContext.Characters.Add(warrior);
+            worldContext.Characters.Add(new Warrior("Thorin"));
             worldContext.Characters.Add(new Mage("Elira"));
             worldContext.ItemPool.Add(new Sword());
-            
-            // Register RPG Commands
-            registry.Register(new HelpCommand(registry));
-            registry.Register(new CreateCommand(worldContext));
-            registry.Register(new EquipCommand(worldContext));
-            registry.Register(new LsCommand(worldContext));
-            registry.Register(new ActCommand(combatSystem, worldContext));
 
-            // 3. Text System & State
+            // RPG Registry
+            var charRegistry = new CommandRegistry();
+            charRegistry.Register(new HelpCommand(charRegistry));
+            charRegistry.Register(new CreateCommand(worldContext));
+            charRegistry.Register(new EquipCommand(worldContext)); // "add" for chars
+            charRegistry.Register(new LsCommand(worldContext));
+            charRegistry.Register(new ActCommand(combatSystem, worldContext));
+
+            // --- 2. Text Setup ---
             var docContext = new DocumentContext();
             var textFactory = new TextFactory();
 
-            // Register Text Commands
-            registry.Register(new AddTextCommand(docContext, textFactory));
-            registry.Register(new PrintCommand(docContext));
-            registry.Register(new PwdCommand(docContext));
-            registry.Register(new ChangeDirCommand(docContext));
-            // Add other commands (Up, Rm) similarly...
+            // Text Registry
+            var textRegistry = new CommandRegistry();
+            textRegistry.Register(new HelpCommand(textRegistry));
+            textRegistry.Register(new AddTextCommand(docContext, textFactory));
+            textRegistry.Register(new PrintCommand(docContext));
+            textRegistry.Register(new PwdCommand(docContext));
+            textRegistry.Register(new ChangeDirCommand(docContext));
+            textRegistry.Register(new UpCommand(docContext)); // New
+            textRegistry.Register(new RmCommand(docContext)); // New
 
-            return (registry, worldContext, docContext);
+            return (textRegistry, charRegistry, worldContext, docContext);
         }
     }
 }
