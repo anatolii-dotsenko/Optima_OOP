@@ -1,11 +1,14 @@
-public abstract class Leaf : IText
+namespace GameModel.Text
 {
-    protected string? _content;
-
-    protected Leaf(string content)
+    public abstract class Leaf : IText
     {
-        _content = content;
-    }
+        protected string? _content;
 
-    public abstract string Render();
+        protected Leaf(string content)
+        {
+            _content = content;
+        }
+
+        public abstract string Render();
+    }
 }

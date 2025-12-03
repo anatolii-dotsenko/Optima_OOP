@@ -1,4 +1,7 @@
-public interface IText
+namespace GameModel.Text
 {
-    string Render();
+    public interface IText
+    {
+        string Render();
+    }
 }

@@ -1,17 +1,24 @@
-public abstract class Container : IText
+using System.Collections.Generic;
+
+namespace GameModel.Text
 {
-    protected string _name;
-    protected List<IText> _children = new();
-
-    protected Container(string name)
+    public abstract class Container : IText
     {
-        _name = name;
-    }
+        protected string _name;
+        protected List<IText> _children = new();
+        public Container? Parent { get; }
 
-    public void AddChild(IText child)
-    {
-        _children.Add(child);
-    }
+        protected Container(string name, Container? parent = null)
+        {
+            _name = name;
+            Parent = parent;
+        }
 
-    public abstract string Render();
+        public void AddChild(IText child)
+        {
+            _children.Add(child);
+        }
+
+        public abstract string Render();
+    }
 }

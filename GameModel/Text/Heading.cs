@@ -1,20 +1,26 @@
-public class Heading : Container
+using System.Text;
+
+namespace GameModel.Text
 {
-    private readonly int _rank;
-
-    public Heading(string name, int rank) 
-        : base(name)
+    public class Heading : Container
     {
-        _rank = rank;
-    }
+        private readonly int _rank;
 
-    public override string Render()
-    {
-        var sb = new StringBuilder();
-        sb.AppendLine(new string('\t', _rank) + _name);
-        _children.ForEach(c =>
-            sb.AppendLine(new string('\t', _rank + 1) + c.Render()));
+        public Heading(string name, int rank, Container parent)
+            : base(name, parent)
+        {
+            _rank = rank;
+        }
 
-        return sb.ToString();
+        public override string Render()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine(new string('\t', _rank) + _name);
+
+            foreach (var child in _children)
+                sb.AppendLine(new string('\t', _rank + 1) + child.Render());
+
+            return sb.ToString();
+        }
     }
 }

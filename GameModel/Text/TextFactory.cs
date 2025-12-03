@@ -1,31 +1,43 @@
-public class TextFactory
+using System;
+
+namespace GameModel.Text
 {
-    private Container _current;
-
-    public TextFactory(string title)
+    public class TextFactory
     {
-        _current = new Root(title);
-    }
+        private Container _current;
 
-    public void AddHeading(string name, int rank = 0)
-    {
-        var heading = new Heading(name, rank);
-        _current.AddChild(heading);
-        _current = heading;
-    }
+        public TextFactory(string title)
+        {
+            _current = new Root(title);
+        }
 
-    public void AddParagraph(string content)
-    {
-        _current.AddChild(new Paragraph(content));
-    }
+        public void AddHeading(string name, int rank = 0)
+        {
+            var heading = new Heading(name, rank, _current);
+            _current.AddChild(heading);
+            _current = heading;
+        }
 
-    public void Up()
-    {
-        Console.WriteLine("Moving up not supported without Parent links.");
-    }
+        public void AddParagraph(string content)
+        {
+            _current.AddChild(new Paragraph(content));
+        }
 
-    public override string ToString()
-    {
-        return _current.Render();
+        public void Up()
+        {
+            if (_current.Parent == null)
+                Console.WriteLine("Already at root.");
+            else
+                _current = _current.Parent;
+        }
+
+        public override string ToString()
+        {
+            var root = _current;
+            while (root.Parent != null)
+                root = root.Parent;
+
+            return root.Render();
+        }
     }
 }
