@@ -26,6 +26,9 @@ namespace GameModel
             var gameState = GameState.Instance;
             gameState.CommandRegistry.RegisterCommands();
 
+            // Log system startup
+            gameState.Logger.LogInfo("Game initialized.");
+
             // Create characters
             Warrior thorin = new Warrior("Thorin");
             // Inject the starting ability via constructor (DIP)
@@ -94,7 +97,7 @@ namespace GameModel
             }
             else
             {
-                Console.WriteLine($"Unknown command: {commandName}");
+                gameState.Logger.LogWarning($"Unknown command: {commandName}");
             }
         }
 

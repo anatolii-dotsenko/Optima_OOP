@@ -1,19 +1,34 @@
 using GameModel.Characters;
+using GameModel.Combat;
 
 namespace GameModel.Abilities
 {
     /// <summary>
-    /// Deals fixed magical damage ignoring armor.
+    /// Fireball ability that deals fixed magical damage, ignoring armor.
     /// </summary>
     public class Fireball : Ability
     {
-        public Fireball() : base("Fireball") { }
+        public Fireball()
+        {
+            Name = "Fireball";
+        }
+
+        public override CombatAction CalculateEffect(Character user, Character target)
+        {
+            return new CombatAction
+            {
+                Type = CombatAction.ActionType.MagicalDamage,
+                Amount = 75,
+                Target = target,
+                Description = $"{user.Name} casts Fireball on {target.Name}!"
+            };
+        }
 
         public override int Apply(Character user, Character target)
         {
-            int damage = 75;
-            target.TakeDamage(damage);
-            return damage;
+            var action = CalculateEffect(user, target);
+            target.TakeDamage(action.Amount);
+            return action.Amount;
         }
     }
 }

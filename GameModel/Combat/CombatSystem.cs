@@ -1,3 +1,4 @@
+using GameModel.Abilities;
 using GameModel.Characters;
 using GameModel.Logging;
 
@@ -60,6 +61,45 @@ namespace GameModel.Combat
 
             int damageDealt = ability.Apply(user, target);
 
+            var result = new AbilityResult
+            {
+                UserName = user.Name,
+                AbilityName = ability.Name,
+                TargetName = target.Name,
+                DamageDealt = damageDealt
+            };
+
+            if (damageDealt <= 0)
+            {
+                _logger.LogAbilityNonDamage(user.Name, ability.Name, target.Name);
+            }
+            else
+            {
+                _logger.LogAbility(result);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Executes an ability by reference (type-safe, no magic strings).
+        /// Recommended over string-based UseAbility.
+        /// </summary>
+        public AbilityResult UseAbility(Character user, Character target, Ability ability)
+        {
+            if (ability == null)
+            {
+                _logger.LogAbilityNotFound(user.Name, "Unknown");
+                return new AbilityResult
+                {
+                    UserName = user.Name,
+                    AbilityName = "Unknown",
+                    TargetName = target.Name,
+                    DamageDealt = 0
+                };
+            }
+
+            int damageDealt = ability.Apply(user, target);
             var result = new AbilityResult
             {
                 UserName = user.Name,

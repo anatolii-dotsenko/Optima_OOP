@@ -17,12 +17,22 @@ namespace GameModel
 
         public CombatSystem CombatSystem { get; }
         public CommandRegistry CommandRegistry { get; }
+        public ILogger Logger { get; }
         public List<Character> Characters { get; } = new();
 
         private GameState()
         {
-            ICombatLogger logger = new ConsoleLogger();
-            CombatSystem = new CombatSystem(logger);
+            // Create composite logger for flexibility
+            var compositeLogger = new CompositeLogger();
+            
+            // Add combat logger
+            compositeLogger.AddCombatLogger(new ConsoleLogger());
+            
+            // Add generic logger
+            compositeLogger.AddGenericLogger(new ConsoleLoggerGeneric());
+
+            Logger = compositeLogger;
+            CombatSystem = new CombatSystem(compositeLogger);
             CommandRegistry = new CommandRegistry();
         }
 
