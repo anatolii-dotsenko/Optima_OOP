@@ -14,6 +14,7 @@ namespace GameModel.Content.Characters
             SetBaseStat(StatType.Armor, 2);
 
             LearnAbility(new Fireball());
+            LearnAbility(new Lightning());
         }
     }
 }
