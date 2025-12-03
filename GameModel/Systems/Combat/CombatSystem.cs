@@ -3,6 +3,7 @@ using GameModel.Characters;
 using GameModel.Logging;
 using GameModel.Combat.Actions;
 using GameModel.Combat.Results;
+using GameModel.Core.Contracts;
 
 namespace GameModel.Combat
 {
@@ -11,7 +12,7 @@ namespace GameModel.Combat
     /// Handles all combat logic: attacks, defenses, ability usage.
     /// Character class stores only data, while this class performs actions.
     /// </summary>
-    public class CombatSystem
+    public class CombatSystem : ICombatSystem
     {
         private readonly ICombatLogger _logger;
 

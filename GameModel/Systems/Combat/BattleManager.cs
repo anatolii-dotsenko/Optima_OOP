@@ -3,24 +3,24 @@ using System.Collections.Generic;
 using GameModel.Characters;
 using GameModel.Logging;
 using GameModel.Combat.Actions;
+using GameModel.Core.Contracts;
 
 namespace GameModel.Combat
 {
     /// <summary>
     /// Manages the flow of turn-based combat between participants.
-    /// Encapsulates battle loop logic, win conditions, and turn coordination.
-    /// This is the authoritative "Coordinator" referenced in the Technical Specification.
-    /// Coordinates the flow of battle between attacker and defender autonomously.
+    /// Depends on ICombatSystem abstraction (DIP compliance).
     /// </summary>
     public class BattleManager
     {
-        private readonly CombatSystem _combatSystem;
+        private readonly ICombatSystem _combatSystem;
         private readonly ICombatLogger _logger;
         private readonly List<Character> _participants;
         private int _currentTurnIndex;
         private bool _battleInProgress;
 
-        public BattleManager(CombatSystem combatSystem, ICombatLogger logger)
+        // Inject abstraction, not concrete class (DIP)
+        public BattleManager(ICombatSystem combatSystem, ICombatLogger logger)
         {
             _combatSystem = combatSystem;
             _logger = logger;

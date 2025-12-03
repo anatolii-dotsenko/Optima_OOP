@@ -3,40 +3,33 @@ using GameModel.Characters;
 using GameModel.Combat;
 using GameModel.Commands;
 using GameModel.Logging;
+using GameModel.Core.Contracts;
 
 namespace GameModel
 {
     /// <summary>
-    /// Singleton holding the current game state.
-    /// Provides centralized access to combat system, logging, characters, and commands.
-    /// Serves as the composition root for dependency injection.
+    /// Holds the current game state and provides access to game systems.
+    /// Now accepts injected dependencies (DIP) instead of creating them internally.
     /// </summary>
     public class GameState
     {
         private static GameState _instance;
-        public static GameState Instance => _instance ??= new GameState();
+        public static GameState Instance => _instance ??= Infrastructure.Setup.GameBuilder.Build();
 
-        public CombatSystem CombatSystem { get; }
+        public ICombatSystem CombatSystem { get; }
         public ICombatLogger CombatLogger { get; }
         public ILogger Logger { get; }
         public CommandRegistry CommandRegistry { get; }
         public List<Character> Characters { get; } = new();
 
-        private GameState()
+        /// <summary>
+        /// Constructor that accepts all dependencies (DIP compliance).
+        /// </summary>
+        public GameState(ICombatSystem combatSystem, CompositeLogger compositeLogger)
         {
-            // Create composite logger for multi-channel output
-            var compositeLogger = new CompositeLogger();
-            
-            // Add combat-specific logger
-            var combatLogger = new ConsoleLogger();
-            compositeLogger.AddCombatLogger(combatLogger);
+            CombatSystem = combatSystem;
             CombatLogger = compositeLogger;
-            
-            // Add generic system logger
-            compositeLogger.AddGenericLogger(new ConsoleLoggerGeneric());
-
             Logger = compositeLogger;
-            CombatSystem = new CombatSystem(compositeLogger);
             CommandRegistry = new CommandRegistry();
         }
 
