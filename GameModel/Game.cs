@@ -4,6 +4,7 @@ using GameModel.Characters;
 using GameModel.Items;
 using GameModel.Combat;
 using GameModel.Logging;
+using GameModel.Text; // Додано namespace
 
 namespace GameModel
 {
@@ -11,63 +12,78 @@ namespace GameModel
     {
         static void Main(string[] args)
         {
-            // 1. Initialize System
+            // ---------------------------------------------------------
+            // 1. Існуюча симуляція бою (залишено без змін)
+            // ---------------------------------------------------------
             ICombatLogger logger = new ConsoleLogger();
             CombatSystem combat = new CombatSystem(logger);
 
-            // 2. Create Characters
             Warrior thorin = new Warrior("Thorin");
             Mage elira = new Mage("Elira");
 
-            // 3. Equip Items
             thorin.EquipItem(new Sword());
             thorin.EquipItem(new Shield());
             elira.EquipItem(new MagicAmulet());
 
-            // 4. Pre-Battle Stats
             Console.WriteLine("=== PRE-BATTLE STATS ===");
             PrintCharacterInfo(thorin);
             PrintCharacterInfo(elira);
             Console.WriteLine();
 
-            // 5. Battle Simulation
             Console.WriteLine("=== BATTLE STARTS ===");
-
-            // Action 1: Thorin attacks
+            
             combat.Attack(thorin, elira);
-            if (CheckIfDead(thorin, elira)) goto PostBattle;
+            if (!CheckIfDead(thorin, elira))
+            {
+                combat.UseAbility(elira, thorin, "Fireball");
+                if (!CheckIfDead(thorin, elira))
+                {
+                    combat.UseAbility(thorin, elira, "Power Strike");
+                    if (!CheckIfDead(thorin, elira))
+                    {
+                        combat.Heal(elira, 10);
+                        if (!CheckIfDead(thorin, elira))
+                        {
+                            combat.Attack(thorin, elira);
+                            if (!CheckIfDead(thorin, elira))
+                            {
+                                combat.Attack(elira, thorin);
+                                CheckIfDead(thorin, elira);
+                            }
+                        }
+                    }
+                }
+            }
 
-            // Action 2: Elira uses Fireball
-            combat.UseAbility(elira, thorin, "Fireball");
-            if (CheckIfDead(thorin, elira)) goto PostBattle;
-
-            // Action 3: Thorin uses Power Strike
-            combat.UseAbility(thorin, elira, "Power Strike");
-            if (CheckIfDead(thorin, elira)) goto PostBattle;
-
-            // Action 4: Elira heals
-            combat.Heal(elira, 10);
-            if (CheckIfDead(thorin, elira)) goto PostBattle;
-
-            // Action 5: Thorin attacks again
-            combat.Attack(thorin, elira);
-            if (CheckIfDead(thorin, elira)) goto PostBattle;
-
-            // Action 6: Elira attacks
-            combat.Attack(elira, thorin);
-            if (CheckIfDead(thorin, elira)) goto PostBattle;
-
-            PostBattle:
             Console.WriteLine("=== BATTLE ENDS ===");
             Console.WriteLine();
 
-            // 6. Post-Battle Stats
             Console.WriteLine("=== POST-BATTLE STATS ===");
             PrintCharacterInfo(thorin);
             PrintCharacterInfo(elira);
+            Console.WriteLine(new string('=', 50));
+
+            // ---------------------------------------------------------
+            // 2. Новий приклад використання TextFactory (Example Usage)
+            // ---------------------------------------------------------
+            Console.WriteLine("\n=== TEXT ABSTRACTION DEMO ===");
+            
+            var factory = new TextFactory("Document Root");
+
+            factory.AddHeading("Top Section");
+            factory.AddParagraph("This is a line.");
+            factory.AddParagraph("Another line.");
+
+            factory.AddHeading("Inner Section", 1);
+            factory.AddParagraph("Inner text.");
+
+            factory.Up();
+
+            factory.AddParagraph("Back to top level.");
+
+            Console.WriteLine(factory.ToString());
         }
 
-        // Helper method to check health and print defeat message
         static bool CheckIfDead(Character c1, Character c2)
         {
             if (c1.Health <= 0)
