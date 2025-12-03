@@ -12,7 +12,7 @@ namespace GameModel.Items
     {
         public string Name { get; }
         public List<StatModifier> Modifiers { get; } = new();
-        public Ability GrantedAbility { get; protected set; }
+        public Ability? GrantedAbility { get; protected set; }
 
         public Item(string name)
         {
