@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace GameModel.Infrastructure.CLI
 {
@@ -27,7 +28,6 @@ namespace GameModel.Infrastructure.CLI
             while (true)
             {
                 Console.Write($"{_session.ModeName} > ");
-                // FIX: Console.ReadLine() returns string? (nullable)
                 string? input = Console.ReadLine();
 
                 if (string.IsNullOrWhiteSpace(input)) continue;
@@ -39,23 +39,29 @@ namespace GameModel.Infrastructure.CLI
 
         private void ParseAndExecute(string input)
         {
-            var parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            // Use the smart parser instead of simple Split
+            var parts = ParseArguments(input);
+            
+            if (parts.Count == 0) return;
+
             string command = parts[0].ToLower();
             
             var args = new List<string>();
             var options = new Dictionary<string, string>();
 
-            for (int i = 1; i < parts.Length; i++)
+            // Iterate starting from 1 (skipping the command keyword)
+            for (int i = 1; i < parts.Count; i++)
             {
                 if (parts[i].StartsWith("--"))
                 {
                     string key = parts[i].Substring(2);
                     string val = "true";
                     
-                    if (i + 1 < parts.Length && !parts[i + 1].StartsWith("--"))
+                    // Look ahead for the value
+                    if (i + 1 < parts.Count && !parts[i + 1].StartsWith("--"))
                     {
                         val = parts[i + 1];
-                        i++;
+                        i++; // Skip next part since we consumed it as a value
                     }
                     options[key] = val;
                 }
@@ -74,6 +80,46 @@ namespace GameModel.Infrastructure.CLI
             {
                 Console.WriteLine($"Error: {ex.Message}");
             }
+        }
+
+        /// <summary>
+        /// Parses the input string into arguments, preserving quoted strings as single tokens.
+        /// Example: 'add --id "Iron Sword"' -> ['add', '--id', 'Iron Sword']
+        /// </summary>
+        private List<string> ParseArguments(string input)
+        {
+            var args = new List<string>();
+            var currentArg = new StringBuilder();
+            bool inQuotes = false;
+
+            foreach (char c in input)
+            {
+                if (c == '"')
+                {
+                    inQuotes = !inQuotes;
+                    // We don't append the quote itself to the argument
+                }
+                else if (c == ' ' && !inQuotes)
+                {
+                    if (currentArg.Length > 0)
+                    {
+                        args.Add(currentArg.ToString());
+                        currentArg.Clear();
+                    }
+                }
+                else
+                {
+                    currentArg.Append(c);
+                }
+            }
+
+            // Add the last argument if exists
+            if (currentArg.Length > 0)
+            {
+                args.Add(currentArg.ToString());
+            }
+
+            return args;
         }
     }
 }
