@@ -1,56 +1,57 @@
+using System.Collections.Generic;
 using GameModel.Content.Characters;
 using GameModel.Content.Items;
 using GameModel.Core.Contracts;
-using GameModel.Core.Entities;
+using GameModel.Core.State;
 using GameModel.Infrastructure.CLI;
 using GameModel.Infrastructure.CLI.Commands;
 using GameModel.Infrastructure.Logging;
 using GameModel.Systems.Combat;
+using GameModel.Text;
 
 namespace GameModel.Infrastructure.Setup
 {
-    /// <summary>
-    /// Constructs the game graph, wiring dependencies.
-    /// Replaces the monolithic 'Game' class and Singleton GameState.
-    /// </summary>
     public class GameBuilder
     {
-        public (BattleManager, CommandRegistry, List<ICombatEntity>) Build()
+        /// <summary>
+        /// Builds the game environment and returns the necessary contexts and registry.
+        /// </summary>
+        public (CommandRegistry, WorldContext, DocumentContext) Build()
         {
-            // 1. Setup Logging
+            // 1. Shared Infrastructure
+            var registry = new CommandRegistry();
             var logger = new CompositeLogger();
             logger.Add(new ConsoleLogger());
-
-            // 2. Setup Systems
-            ICombatSystem combatSystem = new CombatSystem(logger);
-
-            // 3. Setup Entities
-            var warrior = new Warrior("Thorin");
-            warrior.EquipItem(new Sword());
-            warrior.EquipItem(new Shield());
-
-            var mage = new Mage("Elira");
-            mage.EquipItem(new MagicAmulet());
-            mage.EquipItem(new LightningWand());
-
-
-            var characters = new List<ICombatEntity> { warrior, mage };
             
-            // Helper for commands to find characters
-            Func<string, ICombatEntity?> lookup = name => 
-                characters.FirstOrDefault(c => c.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-
-            // 4. Setup Manager
-            var battleManager = new BattleManager(combatSystem, logger);
-            foreach (var c in characters) battleManager.AddParticipant(c);
-
-            // 5. Setup CLI
-            var registry = new CommandRegistry();
+            // 2. RPG System & State
+            var worldContext = new WorldContext();
+            ICombatSystem combatSystem = new CombatSystem(logger);
+            
+            // Seed Data
+            var warrior = new Warrior("Thorin");
+            worldContext.Characters.Add(warrior);
+            worldContext.Characters.Add(new Mage("Elira"));
+            worldContext.ItemPool.Add(new Sword());
+            
+            // Register RPG Commands
             registry.Register(new HelpCommand(registry));
-            registry.Register(new AttackCommand(combatSystem, lookup));
-            // Add HealCommand, etc.
+            registry.Register(new CreateCommand(worldContext));
+            registry.Register(new EquipCommand(worldContext));
+            registry.Register(new LsCommand(worldContext));
+            registry.Register(new ActCommand(combatSystem, worldContext));
 
-            return (battleManager, registry, characters);
+            // 3. Text System & State
+            var docContext = new DocumentContext();
+            var textFactory = new TextFactory();
+
+            // Register Text Commands
+            registry.Register(new AddTextCommand(docContext, textFactory));
+            registry.Register(new PrintCommand(docContext));
+            registry.Register(new PwdCommand(docContext));
+            registry.Register(new ChangeDirCommand(docContext));
+            // Add other commands (Up, Rm) similarly...
+
+            return (registry, worldContext, docContext);
         }
     }
 }
