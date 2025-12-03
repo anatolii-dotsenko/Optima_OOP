@@ -6,6 +6,7 @@ using GameModel.Combat;
 using GameModel.Logging;
 using GameModel.Text;
 using GameModel.Abilities;
+using GameModel.Commands;
 
 namespace GameModel
 {
@@ -21,23 +22,20 @@ namespace GameModel
         /// <param name="args">Command line arguments (not used).</param>
         static void Main(string[] args)
         {
-            // ---------------------------------------------------------
-            // 1. Combat Simulation
-            // ---------------------------------------------------------
-            
-            // Initialize infrastructure
-            ICombatLogger logger = new ConsoleLogger();
-            CombatSystem combat = new CombatSystem(logger);
+            // Initialize game state singleton
+            var gameState = GameState.Instance;
+            gameState.CommandRegistry.RegisterCommands();
 
-            // Create characters
+            // Setup characters
             Warrior thorin = new Warrior("Thorin");
             Mage elira = new Mage("Elira");
 
-            // Equip items (Composition)
             thorin.EquipItem(new Sword());
             thorin.EquipItem(new Shield());
-            // Inject the concrete ability at the composition root
             elira.EquipItem(new MagicAmulet(new Fireball()));
+
+            gameState.AddCharacter(thorin);
+            gameState.AddCharacter(elira);
 
             // Display initial state
             Console.WriteLine("=== PRE-BATTLE STATS ===");
@@ -45,40 +43,11 @@ namespace GameModel
             PrintCharacterInfo(elira);
             Console.WriteLine();
 
-            // Execute Turn-Based Battle Logic
+            // Execute turn-based battle via hardcoded sequence (can be replaced with interactive loop)
             Console.WriteLine("=== BATTLE STARTS ===");
-            
-            // Turn 1: Thorin attacks
-            combat.Attack(thorin, elira);
-            if (!CheckIfDead(thorin, elira))
-            {
-                // Turn 2: Elira responds with magic
-                combat.UseAbility(elira, thorin, "Fireball");
-                if (!CheckIfDead(thorin, elira))
-                {
-                    // Turn 3: Thorin uses special ability
-                    combat.UseAbility(thorin, elira, "Power Strike");
-                    if (!CheckIfDead(thorin, elira))
-                    {
-                        // Turn 4: Elira heals
-                        combat.Heal(elira, 10);
-                        if (!CheckIfDead(thorin, elira))
-                        {
-                            // Turn 5: Thorin attacks again
-                            combat.Attack(thorin, elira);
-                            if (!CheckIfDead(thorin, elira))
-                            {
-                                // Turn 6: Elira attacks
-                                combat.Attack(elira, thorin);
-                                CheckIfDead(thorin, elira);
-                            }
-                        }
-                    }
-                }
-            }
+            ExecuteBattle(gameState, thorin, elira);
 
-            Console.WriteLine("=== BATTLE ENDS ===");
-            Console.WriteLine();
+            Console.WriteLine("=== BATTLE ENDS ===\n");
 
             // Display final state
             Console.WriteLine("=== POST-BATTLE STATS ===");
@@ -86,32 +55,46 @@ namespace GameModel
             PrintCharacterInfo(elira);
             Console.WriteLine(new string('=', 50));
 
-            // ---------------------------------------------------------
-            // 2. Text Abstraction Demo (Composite & Builder Patterns)
-            // ---------------------------------------------------------
-            Console.WriteLine("\n=== TEXT ABSTRACTION DEMO ===");
-            
-            // Initialize the factory (Builder) with a Root node
-            var factory = new TextFactory("Document Root");
+            // Text abstraction demo
+            DemoTextFactory();
+        }
 
-            // Build structure: Add a top-level heading
-            factory.AddHeading("Top Section");
-            factory.AddParagraph("This is a line.");
-            factory.AddParagraph("Another line.");
+        static void ExecuteBattle(GameState gameState, Character thorin, Character elira)
+        {
+            // Sequence of commands (can be replaced with interactive CLI loop)
+            ExecuteCommand(gameState, "attack Thorin Elira");
+            if (CheckIfDead(thorin, elira)) return;
 
-            // Create nested structure: Add a sub-heading (Rank 1)
-            // The factory automatically sets this new heading as the current context
-            factory.AddHeading("Inner Section", 1);
-            factory.AddParagraph("Inner text.");
+            ExecuteCommand(gameState, "ability Elira Thorin Fireball");
+            if (CheckIfDead(thorin, elira)) return;
 
-            // Navigate back up the tree to the parent context
-            factory.Up();
+            ExecuteCommand(gameState, "ability Thorin Elira Power Strike");
+            if (CheckIfDead(thorin, elira)) return;
 
-            // Add content to the parent level again
-            factory.AddParagraph("Back to top level.");
+            ExecuteCommand(gameState, "heal Elira 10");
+            if (CheckIfDead(thorin, elira)) return;
 
-            // Render the entire Composite tree to string
-            Console.WriteLine(factory.ToString());
+            ExecuteCommand(gameState, "attack Thorin Elira");
+            if (CheckIfDead(thorin, elira)) return;
+
+            ExecuteCommand(gameState, "attack Elira Thorin");
+            CheckIfDead(thorin, elira);
+        }
+
+        static void ExecuteCommand(GameState gameState, string input)
+        {
+            var parts = input.Split(' ');
+            var commandName = parts[0];
+            var commandArgs = parts.Skip(1).ToArray();
+
+            if (gameState.CommandRegistry.TryGetCommand(commandName, out var command))
+            {
+                command.Execute(commandArgs);
+            }
+            else
+            {
+                Console.WriteLine($"Unknown command: {commandName}");
+            }
         }
 
         /// <summary>
@@ -160,6 +143,20 @@ namespace GameModel
             Console.WriteLine($"Arm:    {arm}");
             Console.WriteLine($"Items:  {items}");
             Console.WriteLine(new string('-', 20));
+        }
+
+        static void DemoTextFactory()
+        {
+            Console.WriteLine("\n=== TEXT ABSTRACTION DEMO ===");
+            var factory = new TextFactory("Document Root");
+            factory.AddHeading("Top Section");
+            factory.AddParagraph("This is a line.");
+            factory.AddParagraph("Another line.");
+            factory.AddHeading("Inner Section", 1);
+            factory.AddParagraph("Inner text.");
+            factory.Up();
+            factory.AddParagraph("Back to top level.");
+            Console.WriteLine(factory.ToString());
         }
     }
 }
