@@ -12,14 +12,10 @@ namespace GameModel
 {
     /// <summary>
     /// The entry point of the application.
-    /// Orchestrates the combat simulation and demonstrates the text generation system.
+    /// Orchestrates the combat simulation via BattleManager and demonstrates the text generation system.
     /// </summary>
     class Program
     {
-        /// <summary>
-        /// Main execution method.
-        /// </summary>
-        /// <param name="args">Command line arguments (not used).</param>
         static void Main(string[] args)
         {
             // Initialize game state singleton
@@ -31,9 +27,9 @@ namespace GameModel
 
             // Create characters
             Warrior thorin = new Warrior("Thorin");
-            // Inject the starting ability via constructor (DIP)
             Mage elira = new Mage("Elira", new Fireball());
 
+            // Equip items
             thorin.EquipItem(new Sword());
             thorin.EquipItem(new Shield());
             elira.EquipItem(new MagicAmulet(new Fireball()));
@@ -47,11 +43,11 @@ namespace GameModel
             PrintCharacterInfo(elira);
             Console.WriteLine();
 
-            // Execute turn-based battle via hardcoded sequence (can be replaced with interactive loop)
-            Console.WriteLine("=== BATTLE STARTS ===");
-            ExecuteBattle(gameState, thorin, elira);
-
-            Console.WriteLine("=== BATTLE ENDS ===\n");
+            // Initialize and run battle using BattleManager (TS compliance: autonomous coordination)
+            var battleManager = new BattleManager(gameState.CombatSystem, gameState.CombatLogger);
+            battleManager.AddParticipant(thorin);
+            battleManager.AddParticipant(elira);
+            battleManager.Start();
 
             // Display final state
             Console.WriteLine("=== POST-BATTLE STATS ===");
@@ -61,66 +57,6 @@ namespace GameModel
 
             // Text abstraction demo
             DemoTextFactory();
-        }
-
-        static void ExecuteBattle(GameState gameState, Character thorin, Character elira)
-        {
-            // Sequence of commands (can be replaced with interactive CLI loop)
-            ExecuteCommand(gameState, "attack Thorin Elira");
-            if (CheckIfDead(thorin, elira)) return;
-
-            ExecuteCommand(gameState, "ability Elira Thorin Fireball");
-            if (CheckIfDead(thorin, elira)) return;
-
-            ExecuteCommand(gameState, "ability Thorin Elira Power Strike");
-            if (CheckIfDead(thorin, elira)) return;
-
-            ExecuteCommand(gameState, "heal Elira 10");
-            if (CheckIfDead(thorin, elira)) return;
-
-            ExecuteCommand(gameState, "attack Thorin Elira");
-            if (CheckIfDead(thorin, elira)) return;
-
-            ExecuteCommand(gameState, "attack Elira Thorin");
-            CheckIfDead(thorin, elira);
-        }
-
-        static void ExecuteCommand(GameState gameState, string input)
-        {
-            var parts = input.Split(' ');
-            var commandName = parts[0];
-            var commandArgs = parts.Skip(1).ToArray();
-
-            if (gameState.CommandRegistry.TryGetCommand(commandName, out var command))
-            {
-                command.Execute(commandArgs);
-            }
-            else
-            {
-                gameState.Logger.LogWarning($"Unknown command: {commandName}");
-            }
-        }
-
-        /// <summary>
-        /// Checks if either character has reached 0 health.
-        /// Logs a defeat message if a character has died.
-        /// </summary>
-        /// <param name="c1">The first character to check.</param>
-        /// <param name="c2">The second character to check.</param>
-        /// <returns>True if any character is dead; otherwise, false.</returns>
-        static bool CheckIfDead(Character c1, Character c2)
-        {
-            if (c1.Health <= 0)
-            {
-                Console.WriteLine($"\n*** {c1.Name} has been defeated! ***");
-                return true;
-            }
-            if (c2.Health <= 0)
-            {
-                Console.WriteLine($"\n*** {c2.Name} has been defeated! ***");
-                return true;
-            }
-            return false;
         }
 
         /// <summary>

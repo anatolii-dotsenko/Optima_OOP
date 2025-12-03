@@ -16,8 +16,9 @@ namespace GameModel
         public static GameState Instance => _instance ??= new GameState();
 
         public CombatSystem CombatSystem { get; }
-        public CommandRegistry CommandRegistry { get; }
+        public ICombatLogger CombatLogger { get; }
         public ILogger Logger { get; }
+        public CommandRegistry CommandRegistry { get; }
         public List<Character> Characters { get; } = new();
 
         private GameState()
@@ -26,7 +27,9 @@ namespace GameModel
             var compositeLogger = new CompositeLogger();
             
             // Add combat logger
-            compositeLogger.AddCombatLogger(new ConsoleLogger());
+            var combatLogger = new ConsoleLogger();
+            compositeLogger.AddCombatLogger(combatLogger);
+            CombatLogger = compositeLogger;
             
             // Add generic logger
             compositeLogger.AddGenericLogger(new ConsoleLoggerGeneric());
