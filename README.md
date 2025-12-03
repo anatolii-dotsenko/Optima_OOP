@@ -56,6 +56,6 @@ dotnet --version
 * Navigate to the project folder:
 ```text
 cd GameModel
-dotnet run
+dotnet run Game.cs
 ```
  This will compile the project and execute the Program.cs entry point, displaying the battle simulation in the console.
