@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GameModel.Content.Abilities; // Needed for Fireball/Lightning
+using GameModel.Content.Abilities;
 using GameModel.Content.Characters;
 using GameModel.Content.Items;
 using GameModel.Core.Contracts;
+using GameModel.Core.Entities;
 using GameModel.Core.State;
 using GameModel.Core.ValueObjects;
 
@@ -13,10 +14,37 @@ namespace GameModel.Infrastructure.CLI.Commands
     public class CreateCommand : ICommand
     {
         private readonly WorldContext _context;
+        
+        // Dictionary to map character class names (strings) to factory functions.
+        // This replaces the open/closed principle violation found in the previous if/else logic.
+        private readonly Dictionary<string, Func<string, Character>> _characterFactories;
+
+        // Dictionary to map item type names to factory functions.
+        private readonly Dictionary<string, Func<Item>> _itemFactories;
+
         public string Keyword => "create";
         public string Description => "Usage: create <char|item|ability>";
 
-        public CreateCommand(WorldContext context) => _context = context;
+        public CreateCommand(WorldContext context)
+        {
+            _context = context;
+
+            // Initialize character factories. 
+            // New characters can be added here without modifying the Execute method logic.
+            _characterFactories = new Dictionary<string, Func<string, Character>>(StringComparer.OrdinalIgnoreCase)
+            {
+                { "warrior", name => new Warrior(name) },
+                { "mage", name => new Mage(name) }
+                // { "archer", name => new Archer(name) } // Example of easy extension
+            };
+
+            // Initialize item factories.
+            _itemFactories = new Dictionary<string, Func<Item>>(StringComparer.OrdinalIgnoreCase)
+            {
+                { "sword", () => new Sword() },
+                { "shield", () => new Shield() }
+            };
+        }
 
         public void Execute(string[] args, Dictionary<string, string> options)
         {
@@ -24,25 +52,43 @@ namespace GameModel.Infrastructure.CLI.Commands
 
             string type = args[0].ToLower();
             
-            // Dialog mode as requested
             if (type == "char")
             {
                 Console.Write("Class (warrior/mage): ");
-                string? cls = Console.ReadLine()?.ToLower();
+                string? cls = Console.ReadLine()?.Trim();
+                
+                // Validate input
+                if (string.IsNullOrEmpty(cls) || !_characterFactories.ContainsKey(cls))
+                {
+                    Console.WriteLine($"Unknown class. Available: {string.Join(", ", _characterFactories.Keys)}");
+                    return;
+                }
+
                 Console.Write("Name: ");
                 string name = Console.ReadLine() ?? "Unnamed";
 
-                if (cls == "warrior") _context.Characters.Add(new Warrior(name));
-                else if (cls == "mage") _context.Characters.Add(new Mage(name));
-                else Console.WriteLine("Unknown class.");
+                // Use the factory to create the character instance
+                var character = _characterFactories[cls](name);
+                _context.Characters.Add(character);
+                
                 Console.WriteLine($"Character {name} created.");
             }
             else if (type == "item")
             {
                 Console.Write("Type (sword/shield): ");
-                string? it = Console.ReadLine()?.ToLower();
-                if (it == "sword") _context.ItemPool.Add(new Sword());
-                else if (it == "shield") _context.ItemPool.Add(new Shield());
+                string? it = Console.ReadLine()?.Trim();
+
+                // Validate input using the dictionary keys
+                if (string.IsNullOrEmpty(it) || !_itemFactories.ContainsKey(it))
+                {
+                    Console.WriteLine($"Unknown item type. Available: {string.Join(", ", _itemFactories.Keys)}");
+                    return;
+                }
+
+                // Create and add the item
+                var item = _itemFactories[it]();
+                _context.ItemPool.Add(item);
+                
                 Console.WriteLine("Item created.");
             }
             // New Ability logic
@@ -50,6 +96,10 @@ namespace GameModel.Infrastructure.CLI.Commands
             {
                 Console.WriteLine("Creating ability (mock implementation: adds to pool if pool existed, or just logs).");
                 Console.WriteLine("Ability created.");
+            }
+            else
+            {
+                Console.WriteLine($"Unknown creation type '{type}'. Use char, item, or ability.");
             }
         }
     }

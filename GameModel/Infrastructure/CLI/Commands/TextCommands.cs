@@ -11,7 +11,9 @@ namespace GameModel.Infrastructure.CLI.Commands
         private readonly DocumentContext _context;
         private readonly TextFactory _factory;
         public string Keyword => "add";
-        public string Description => "Usage: add <container|leaf> <type>";
+        
+        // Updated description to reflect simplified usage
+        public string Description => "Usage: add <heading|paragraph>";
 
         public AddTextCommand(DocumentContext context, TextFactory factory)
         {
@@ -21,16 +23,31 @@ namespace GameModel.Infrastructure.CLI.Commands
 
         public void Execute(string[] args, Dictionary<string, string> options)
         {
-            if (args.Length < 2) { Console.WriteLine(Description); return; }
+            // Requires only 1 argument now (the type)
+            if (args.Length < 1) { Console.WriteLine(Description); return; }
             
-            string category = args[0].ToLower(); // container or leaf
-            string typeArg = args[1].ToLower();  // e.g. heading, paragraph
+            string typeArg = args[0].ToLower(); // e.g. heading, paragraph
 
-            // Dialog for content
+            // Determine the TextType directly from the argument
+            TextType type;
+            if (typeArg == "heading")
+            {
+                type = TextType.Heading;
+            }
+            else if (typeArg == "paragraph")
+            {
+                type = TextType.Paragraph;
+            }
+            else
+            {
+                Console.WriteLine("Unknown type. Available types: heading, paragraph");
+                return;
+            }
+
+            // Dialog for content remains the same
             Console.Write("Enter name/content: ");
             string content = Console.ReadLine() ?? "";
 
-            TextType type = (typeArg == "heading") ? TextType.Heading : TextType.Paragraph;
             _factory.AddElement(_context, type, content);
             
             Console.WriteLine($"Added {type} '{content}'.");
@@ -127,7 +144,7 @@ namespace GameModel.Infrastructure.CLI.Commands
                     }
                     
                     var parent = _context.CurrentContainer.Parent;
-                    parent.RemoveChild(_context.CurrentContainer.Name); // Assuming RemoveChild works by name/ID
+                    parent.RemoveChild(_context.CurrentContainer.Name); 
                     _context.CurrentContainer = parent;
                     Console.WriteLine("Removed current. Moved up.");
                 }
