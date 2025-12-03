@@ -12,7 +12,7 @@ namespace GameModel.Infrastructure.CLI.Commands
         private readonly WorldContext _context;
 
         public string Keyword => "act";
-        public string Description => "Usage: act <attack|heal|ability> <actor> <target> [--id AbilityName]";
+        public string Description => "Usage: act <attack|heal|ability> <actor> <target> [--id <ability_name>]. Performs a combat action.";
 
         public ActCommand(ICombatSystem system, WorldContext context)
         {
@@ -37,7 +37,7 @@ namespace GameModel.Infrastructure.CLI.Commands
 
             if (actor == null || target == null)
             {
-                Console.WriteLine("Actor or Target not found.");
+                Console.WriteLine("Error: Actor or Target character not found.");
                 return;
             }
 
@@ -48,15 +48,14 @@ namespace GameModel.Infrastructure.CLI.Commands
                     break;
                 
                 case "heal":
-                    _system.Heal(target, 10); 
+                    _system.Heal(target, 10); // Standard heal amount for demo
                     break;
 
                 case "ability":
-                    // FIX: GetValueOrDefault returns null if missing
                     string? abilityName = options.GetValueOrDefault("id");
                     if (string.IsNullOrEmpty(abilityName))
                     {
-                        Console.WriteLine("Specify ability name with --id.");
+                        Console.WriteLine("Error: Please specify the ability name using '--id <AbilityName>'.");
                         return;
                     }
                     
@@ -68,12 +67,12 @@ namespace GameModel.Infrastructure.CLI.Commands
                     }
                     else
                     {
-                        Console.WriteLine($"Ability '{abilityName}' not found on {actor.Name}");
+                        Console.WriteLine($"Ability '{abilityName}' not found on character '{actor.Name}'.");
                     }
                     break;
 
                 default:
-                    Console.WriteLine("Unknown action type. Use attack, heal, or ability.");
+                    Console.WriteLine("Unknown action type. Please use 'attack', 'heal', or 'ability'.");
                     break;
             }
         }

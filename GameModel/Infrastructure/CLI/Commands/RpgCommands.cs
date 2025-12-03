@@ -14,31 +14,22 @@ namespace GameModel.Infrastructure.CLI.Commands
     public class CreateCommand : ICommand
     {
         private readonly WorldContext _context;
-        
-        // Dictionary to map character class names (strings) to factory functions.
-        // This replaces the open/closed principle violation found in the previous if/else logic.
         private readonly Dictionary<string, Func<string, Character>> _characterFactories;
-
-        // Dictionary to map item type names to factory functions.
         private readonly Dictionary<string, Func<Item>> _itemFactories;
 
         public string Keyword => "create";
-        public string Description => "Usage: create <char|item|ability>";
+        public string Description => "Usage: create <char|item|ability>. Interactive dialog to create a new character, item, or ability.";
 
         public CreateCommand(WorldContext context)
         {
             _context = context;
 
-            // Initialize character factories. 
-            // New characters can be added here without modifying the Execute method logic.
             _characterFactories = new Dictionary<string, Func<string, Character>>(StringComparer.OrdinalIgnoreCase)
             {
                 { "warrior", name => new Warrior(name) },
                 { "mage", name => new Mage(name) }
-                // { "archer", name => new Archer(name) } // Example of easy extension
             };
 
-            // Initialize item factories.
             _itemFactories = new Dictionary<string, Func<Item>>(StringComparer.OrdinalIgnoreCase)
             {
                 { "sword", () => new Sword() },
@@ -54,52 +45,49 @@ namespace GameModel.Infrastructure.CLI.Commands
             
             if (type == "char")
             {
-                Console.Write("Class (warrior/mage): ");
+                // Interactive dialog for character creation
+                Console.Write($"Enter character class ({string.Join("/", _characterFactories.Keys)}): ");
                 string? cls = Console.ReadLine()?.Trim();
                 
-                // Validate input
                 if (string.IsNullOrEmpty(cls) || !_characterFactories.ContainsKey(cls))
                 {
                     Console.WriteLine($"Unknown class. Available: {string.Join(", ", _characterFactories.Keys)}");
                     return;
                 }
 
-                Console.Write("Name: ");
+                Console.Write("Enter character name: ");
                 string name = Console.ReadLine() ?? "Unnamed";
 
-                // Use the factory to create the character instance
                 var character = _characterFactories[cls](name);
                 _context.Characters.Add(character);
                 
-                Console.WriteLine($"Character {name} created.");
+                Console.WriteLine($"Character '{name}' ({cls}) created successfully.");
             }
             else if (type == "item")
             {
-                Console.Write("Type (sword/shield): ");
+                // Interactive dialog for item creation
+                Console.Write($"Enter item type ({string.Join("/", _itemFactories.Keys)}): ");
                 string? it = Console.ReadLine()?.Trim();
 
-                // Validate input using the dictionary keys
                 if (string.IsNullOrEmpty(it) || !_itemFactories.ContainsKey(it))
                 {
                     Console.WriteLine($"Unknown item type. Available: {string.Join(", ", _itemFactories.Keys)}");
                     return;
                 }
 
-                // Create and add the item
                 var item = _itemFactories[it]();
                 _context.ItemPool.Add(item);
                 
-                Console.WriteLine("Item created.");
+                Console.WriteLine($"Item '{item.Name}' created successfully.");
             }
-            // New Ability logic
             else if (type == "ability")
             {
-                Console.WriteLine("Creating ability (mock implementation: adds to pool if pool existed, or just logs).");
+                Console.WriteLine("Creating ability (Mock: Ability system logic would go here).");
                 Console.WriteLine("Ability created.");
             }
             else
             {
-                Console.WriteLine($"Unknown creation type '{type}'. Use char, item, or ability.");
+                Console.WriteLine($"Unknown creation type '{type}'. Use 'char', 'item', or 'ability'.");
             }
         }
     }
@@ -108,19 +96,18 @@ namespace GameModel.Infrastructure.CLI.Commands
     {
         private readonly WorldContext _context;
         public string Keyword => "add";
-        public string Description => "Usage: add [--char_id <name> --id <item_name>]";
+        public string Description => "Usage: add --char_id <name> --id <item_name>. Equips an item or ability to a character.";
 
         public EquipCommand(WorldContext context) => _context = context;
 
         public void Execute(string[] args, Dictionary<string, string> options)
         {
-            // Strict flag usage per requirements
             string? charName = options.GetValueOrDefault("char_id");
             string? itemName = options.GetValueOrDefault("id");
 
             if (charName == null || itemName == null)
             {
-                Console.WriteLine("Error: Must provide --char_id and --id");
+                Console.WriteLine("Error: Missing arguments. You must provide --char_id and --id.");
                 return;
             }
 
@@ -130,7 +117,7 @@ namespace GameModel.Infrastructure.CLI.Commands
             if (character != null && item != null)
             {
                 character.EquipItem(item);
-                Console.WriteLine($"Equipped '{item.Name}' to '{character.Name}'.");
+                Console.WriteLine($"Successfully equipped '{item.Name}' to '{character.Name}'.");
             }
             else
             {
@@ -143,7 +130,7 @@ namespace GameModel.Infrastructure.CLI.Commands
     {
         private readonly WorldContext _context;
         public string Keyword => "ls";
-        public string Description => "Usage: ls <char|item|ability> [--id <name>]";
+        public string Description => "Usage: ls <char|item|ability> [--id <name>]. Lists objects. Use --id to see full stats.";
 
         public LsCommand(WorldContext context) => _context = context;
 
@@ -157,6 +144,7 @@ namespace GameModel.Infrastructure.CLI.Commands
                 Console.WriteLine("--- Characters ---");
                 foreach (var c in _context.Characters)
                 {
+                    // Filter if --id is provided
                     if (idFilter != null && !c.Name.Equals(idFilter, StringComparison.OrdinalIgnoreCase)) continue;
                     
                     Console.WriteLine($"Name: {c.Name}, HP: {c.GetStats().GetStat(StatType.Health)}/{c.GetStats().GetStat(StatType.MaxHealth)}");
@@ -164,6 +152,7 @@ namespace GameModel.Infrastructure.CLI.Commands
                     {
                         Console.WriteLine($"  Armor: {c.GetStats().GetStat(StatType.Armor)}");
                         Console.WriteLine($"  Attack: {c.GetStats().GetStat(StatType.Attack)}");
+                        Console.WriteLine("  Abilities: " + string.Join(", ", c.GetAbilities().Select(a => a.Name)));
                     }
                 }
             }
@@ -173,7 +162,7 @@ namespace GameModel.Infrastructure.CLI.Commands
                 foreach (var i in _context.ItemPool)
                 {
                     if (idFilter != null && !i.Name.Equals(idFilter, StringComparison.OrdinalIgnoreCase)) continue;
-                    Console.WriteLine($"- {i.Name}");
+                    Console.WriteLine($"- {i.Name} (Grants: {string.Join(", ", i.Modifiers.Select(m => $"{m.Key}+{m.Value}"))})");
                 }
             }
         }

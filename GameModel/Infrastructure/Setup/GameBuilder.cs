@@ -26,7 +26,11 @@ namespace GameModel.Infrastructure.Setup
             // Seed Data
             worldContext.Characters.Add(new Warrior("Thorin"));
             worldContext.Characters.Add(new Mage("Elira"));
+            
             worldContext.ItemPool.Add(new Sword());
+            worldContext.ItemPool.Add(new LightningWand());
+            worldContext.ItemPool.Add(new MagicAmulet());
+            worldContext.ItemPool.Add(new Shield());
 
             // RPG Registry
             var charRegistry = new CommandRegistry();
