@@ -43,7 +43,7 @@ GameModel/
 
 ## 🚀 Getting Started
 **Prerequisites**
-* Ensure you have the .NET SDK installed. Check with:
+* Ensure you have the .NET SDK installed, target is 10. Check with:
 ```text 
 dotnet --version
 ```
