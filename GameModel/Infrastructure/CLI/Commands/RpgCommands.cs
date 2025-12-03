@@ -5,6 +5,7 @@ using GameModel.Content.Characters;
 using GameModel.Content.Items;
 using GameModel.Core.Contracts;
 using GameModel.Core.State;
+using GameModel.Core.ValueObjects; // Added for StatType
 
 namespace GameModel.Infrastructure.CLI.Commands
 {
@@ -23,7 +24,6 @@ namespace GameModel.Infrastructure.CLI.Commands
             string type = args[0].ToLower();
             if (type == "char")
             {
-                // Simple interactive prompts allowed inside the command if args missing
                 Console.Write("Class (warrior/mage): ");
                 string cls = Console.ReadLine()?.ToLower() ?? "";
                 Console.Write("Name: ");
@@ -49,15 +49,16 @@ namespace GameModel.Infrastructure.CLI.Commands
     public class EquipCommand : ICommand
     {
         private readonly WorldContext _context;
-        public string Keyword => "add"; // Matches "add" requirement from 'Characters' system
+        public string Keyword => "add";
         public string Description => "Usage: add --char_id <Name> --id <ItemName>";
 
         public EquipCommand(WorldContext context) => _context = context;
 
         public void Execute(string[] args, Dictionary<string, string> options)
         {
-            string charName = options.GetValueOrDefault("char_id");
-            string itemName = options.GetValueOrDefault("id");
+            // FIX: Use nullable string? because GetValueOrDefault returns null if key is missing
+            string? charName = options.GetValueOrDefault("char_id");
+            string? itemName = options.GetValueOrDefault("id");
 
             if (string.IsNullOrEmpty(charName) || string.IsNullOrEmpty(itemName))
             {
@@ -96,7 +97,7 @@ namespace GameModel.Infrastructure.CLI.Commands
             {
                 Console.WriteLine("--- Characters ---");
                 foreach (var c in _context.Characters)
-                    Console.WriteLine($"- {c.Name} (HP: {c.GetStats().GetStat(GameModel.Core.ValueObjects.StatType.Health)})");
+                    Console.WriteLine($"- {c.Name} (HP: {c.GetStats().GetStat(StatType.Health)})");
             }
             if (type == "item" || type == "all")
             {

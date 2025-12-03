@@ -48,18 +48,20 @@ namespace GameModel.Infrastructure.CLI.Commands
                     break;
                 
                 case "heal":
-                    // Simple logic: Healer heals target (or self) for fixed amount for now
                     _system.Heal(target, 10); 
                     break;
 
                 case "ability":
-                    string abilityName = options.GetValueOrDefault("id");
+                    // FIX: GetValueOrDefault returns null if missing
+                    string? abilityName = options.GetValueOrDefault("id");
                     if (string.IsNullOrEmpty(abilityName))
                     {
                         Console.WriteLine("Specify ability name with --id.");
                         return;
                     }
+                    
                     var ability = actor.GetAbilities().FirstOrDefault(a => a.Name.Equals(abilityName, StringComparison.OrdinalIgnoreCase));
+                    
                     if (ability != null)
                     {
                         _system.UseAbility(actor, target, ability);

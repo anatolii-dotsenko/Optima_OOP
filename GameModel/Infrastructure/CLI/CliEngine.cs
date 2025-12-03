@@ -27,7 +27,8 @@ namespace GameModel.Infrastructure.CLI
             while (true)
             {
                 Console.Write($"{_session.ModeName} > ");
-                string input = Console.ReadLine();
+                // FIX: Console.ReadLine() returns string? (nullable)
+                string? input = Console.ReadLine();
 
                 if (string.IsNullOrWhiteSpace(input)) continue;
                 if (input.Trim().ToLower() == "exit") break;
