@@ -1,4 +1,5 @@
-using GameModel.Infrastructure.Setup;
+using System;
+using GameModel.Infrastructure.CLI;
 
 namespace GameModel
 {
@@ -6,22 +7,36 @@ namespace GameModel
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Initializing Game Model...");
+            ICliSession session;
+
+            if (args.Length > 0)
+            {
+                if (args[0] == "--text") session = new TextSession();
+                else if (args[0] == "--chars") session = new CharacterSession();
+                else session = SelectModeInteractive();
+            }
+            else
+            {
+                session = SelectModeInteractive();
+            }
+
+            var engine = new CliEngine(session);
+            engine.Run();
+        }
+
+        static ICliSession SelectModeInteractive()
+        {
+            Console.WriteLine("Select Mode:");
+            Console.WriteLine("1. Text Mode");
+            Console.WriteLine("2. Characters Mode");
+            Console.Write("Choice (1-2): ");
             
-            var builder = new GameBuilder();
-            var (battleManager, commands, characters) = builder.Build();
-
-            // Example: Run a command manually
-            Console.WriteLine("\n--- Command Test ---");
-            var attackCmd = commands.GetCommand("attack");
-            attackCmd?.Execute(new[] { "Thorin", "Elira" });
-
-            // Run automated battle
-            Console.WriteLine("\n--- Automated Battle ---");
-            battleManager.StartBattle();
-
-            Console.WriteLine("\nPress any key to exit...");
-            Console.ReadKey();
+            var input = Console.ReadLine();
+            if (input == "1") return new TextSession();
+            if (input == "2") return new CharacterSession();
+            
+            Console.WriteLine("Defaulting to Characters Mode.");
+            return new CharacterSession();
         }
     }
 }
