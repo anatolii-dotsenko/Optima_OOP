@@ -1,0 +1,8 @@
+@startuml
+abstract class Leaf {
+    # _content : string?
+    # Leaf(content:string)
+    + {abstract} Render() : string
+}
+IText <|-- Leaf
+@enduml

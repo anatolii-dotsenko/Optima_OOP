@@ -1,0 +1,8 @@
+@startuml
+class Heading {
+    - <<readonly>> _rank : int
+    + Heading(name:string, rank:int, parent:Container)
+    + <<override>> Render() : string
+}
+Container <|-- Heading
+@enduml

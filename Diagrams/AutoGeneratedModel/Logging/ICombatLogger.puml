@@ -1,0 +1,5 @@
+@startuml
+interface ICombatLogger {
+    Write(message:string) : void
+}
+@enduml

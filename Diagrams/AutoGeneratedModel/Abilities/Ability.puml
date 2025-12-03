@@ -1,0 +1,7 @@
+@startuml
+abstract class Ability {
+    + Name : string <<get>>
+    # Ability(name:string)
+    + {abstract} Apply(user:Characters.Character, target:Characters.Character) : int
+}
+@enduml

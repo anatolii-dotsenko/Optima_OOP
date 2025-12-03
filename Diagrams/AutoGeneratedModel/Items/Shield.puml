@@ -1,0 +1,6 @@
+@startuml
+class Shield {
+    + Shield()
+}
+Item <|-- Shield
+@enduml

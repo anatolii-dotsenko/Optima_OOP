@@ -1,0 +1,10 @@
+@startuml
+class TextFactory {
+    + TextFactory(title:string)
+    + AddHeading(name:string, rank:int) : void
+    + AddParagraph(content:string) : void
+    + Up() : void
+    + <<override>> ToString() : string
+}
+TextFactory --> "_current" Container
+@enduml

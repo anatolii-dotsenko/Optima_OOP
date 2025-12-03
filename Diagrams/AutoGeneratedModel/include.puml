@@ -1,0 +1,125 @@
+@startuml
+class Program {
+    {static} - Main(args:string[]) : void
+    {static} - CheckIfDead(c1:Character, c2:Character) : bool
+    {static} - PrintCharacterInfo(c:Character) : void
+}
+class CombatSystem {
+    + CombatSystem(logger:ICombatLogger)
+    + Attack(attacker:Character, defender:Character) : void
+    + UseAbility(user:Character, target:Character, abilityName:string) : void
+    + Heal(healer:Character, amount:int) : void
+}
+CombatSystem --> "_logger" ICombatLogger
+class PowerStrike {
+    + PowerStrike()
+    + <<override>> Apply(user:Character, target:Character) : int
+}
+Ability <|-- PowerStrike
+abstract class Ability {
+    + Name : string <<get>>
+    # Ability(name:string)
+    + {abstract} Apply(user:Characters.Character, target:Characters.Character) : int
+}
+class Fireball {
+    + Fireball()
+    + <<override>> Apply(user:Character, target:Character) : int
+}
+Ability <|-- Fireball
+abstract class Leaf {
+    # _content : string?
+    # Leaf(content:string)
+    + {abstract} Render() : string
+}
+IText <|-- Leaf
+interface IText {
+    Render() : string
+}
+class Root {
+    + Root(name:string)
+    + IsRoot() : bool
+    + <<override>> Render() : string
+}
+Container <|-- Root
+class TextFactory {
+    + TextFactory(title:string)
+    + AddHeading(name:string, rank:int) : void
+    + AddParagraph(content:string) : void
+    + Up() : void
+    + <<override>> ToString() : string
+}
+TextFactory --> "_current" Container
+abstract class Container {
+    # _name : string
+    # Container(name:string, parent:Container?)
+    + AddChild(child:IText) : void
+    + {abstract} Render() : string
+}
+class "List`1"<T> {
+}
+IText <|-- Container
+Container o-> "_children<IText>" "List`1"
+Container --> "Parent" Container
+class Heading {
+    - <<readonly>> _rank : int
+    + Heading(name:string, rank:int, parent:Container)
+    + <<override>> Render() : string
+}
+Container <|-- Heading
+class Paragraph {
+    + Paragraph(content:string)
+    + <<override>> Render() : string
+}
+Leaf <|-- Paragraph
+class Shield {
+    + Shield()
+}
+Item <|-- Shield
+class Sword {
+    + Sword()
+}
+Item <|-- Sword
+class MagicAmulet {
+    + MagicAmulet()
+}
+Item <|-- MagicAmulet
+abstract class Item {
+    + Name : string <<get>>
+    + AttackBonus : int <<get>> <<protected set>>
+    + ArmorBonus : int <<get>> <<protected set>>
+    + HealthBonus : int <<get>> <<protected set>>
+    # Item(name:string, attack:int, armor:int, health:int, ability:Ability?)
+}
+Item --> "GrantedAbility" Ability
+class Mage {
+    + Mage(name:string)
+}
+Character <|-- Mage
+class Warrior {
+    + Warrior(name:string)
+}
+Character <|-- Warrior
+abstract class Character {
+    + Name : string <<get>>
+    + Health : int <<get>> <<protected set>>
+    + MaxHealth : int <<get>> <<protected set>>
+    + Armor : int <<get>> <<protected set>>
+    + AttackPower : int <<get>> <<protected set>>
+    # Character(name:string, maxHealth:int, armor:int, attack:int)
+    + Heal(amount:int) : void
+    + TakeDamage(amount:int) : void
+    + <<virtual>> EquipItem(item:Items.Item) : void
+    + GetFinalStats() : (int TotalAttack, int TotalArmor, int TotalMaxHealth)
+}
+class "List`1"<T> {
+}
+Character o-> "Abilities<Abilities.Ability>" "List`1"
+Character o-> "Equipment<Items.Item>" "List`1"
+interface ICombatLogger {
+    Write(message:string) : void
+}
+class ConsoleLogger {
+    + Write(message:string) : void
+}
+ICombatLogger <|-- ConsoleLogger
+@enduml

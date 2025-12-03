@@ -1,0 +1,7 @@
+@startuml
+class Paragraph {
+    + Paragraph(content:string)
+    + <<override>> Render() : string
+}
+Leaf <|-- Paragraph
+@enduml

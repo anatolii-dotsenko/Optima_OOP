@@ -1,0 +1,18 @@
+@startuml
+abstract class Character {
+    + Name : string <<get>>
+    + Health : int <<get>> <<protected set>>
+    + MaxHealth : int <<get>> <<protected set>>
+    + Armor : int <<get>> <<protected set>>
+    + AttackPower : int <<get>> <<protected set>>
+    # Character(name:string, maxHealth:int, armor:int, attack:int)
+    + Heal(amount:int) : void
+    + TakeDamage(amount:int) : void
+    + <<virtual>> EquipItem(item:Items.Item) : void
+    + GetFinalStats() : (int TotalAttack, int TotalArmor, int TotalMaxHealth)
+}
+class "List`1"<T> {
+}
+Character o-> "Abilities<Abilities.Ability>" "List`1"
+Character o-> "Equipment<Items.Item>" "List`1"
+@enduml

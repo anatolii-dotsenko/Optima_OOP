@@ -1,0 +1,7 @@
+@startuml
+class PowerStrike {
+    + PowerStrike()
+    + <<override>> Apply(user:Character, target:Character) : int
+}
+Ability <|-- PowerStrike
+@enduml

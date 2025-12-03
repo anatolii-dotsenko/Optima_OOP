@@ -1,0 +1,13 @@
+@startuml
+abstract class Container {
+    # _name : string
+    # Container(name:string, parent:Container?)
+    + AddChild(child:IText) : void
+    + {abstract} Render() : string
+}
+class "List`1"<T> {
+}
+IText <|-- Container
+Container o-> "_children<IText>" "List`1"
+Container --> "Parent" Container
+@enduml

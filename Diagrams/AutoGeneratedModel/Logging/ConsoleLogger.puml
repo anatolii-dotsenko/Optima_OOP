@@ -1,0 +1,6 @@
+@startuml
+class ConsoleLogger {
+    + Write(message:string) : void
+}
+ICombatLogger <|-- ConsoleLogger
+@enduml
