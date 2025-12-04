@@ -1,7 +1,0 @@
-@startuml
-class CombatFormatter {
-    + Format(r:AttackResult) : string
-    + Format(r:AbilityResult) : string
-    + Format(r:HealResult) : string
-}
-@enduml

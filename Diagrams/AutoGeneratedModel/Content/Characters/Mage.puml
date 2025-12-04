@@ -1,6 +1,0 @@
-@startuml
-class Mage {
-    + Mage(name:string)
-}
-Character <|-- Mage
-@enduml

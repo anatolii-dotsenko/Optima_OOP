@@ -1,5 +1,0 @@
-@startuml
-interface IStatProvider {
-    GetModifiers() : Dictionary<StatType, int>
-}
-@enduml

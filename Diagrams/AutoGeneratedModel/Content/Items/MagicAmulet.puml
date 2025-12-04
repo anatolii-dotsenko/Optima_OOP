@@ -1,6 +1,0 @@
-@startuml
-class MagicAmulet {
-    + MagicAmulet()
-}
-Item <|-- MagicAmulet
-@enduml

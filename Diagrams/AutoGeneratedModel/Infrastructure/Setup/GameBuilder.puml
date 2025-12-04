@@ -1,5 +1,0 @@
-@startuml
-class GameBuilder {
-    + Build() : (CommandRegistry textReg, CommandRegistry charReg, WorldContext, DocumentContext)
-}
-@enduml

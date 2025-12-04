@@ -1,6 +1,0 @@
-@startuml
-class Warrior {
-    + Warrior(name:string)
-}
-Character <|-- Warrior
-@enduml

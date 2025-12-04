@@ -1,8 +1,0 @@
-@startuml
-interface IText {
-    Name : string <<get>>
-    Render() : string
-}
-IText --> "Id" Guid
-IText --> "Parent" Container
-@enduml

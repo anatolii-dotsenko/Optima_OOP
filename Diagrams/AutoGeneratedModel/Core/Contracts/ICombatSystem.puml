@@ -1,7 +1,0 @@
-@startuml
-interface ICombatSystem {
-    Attack(attacker:ICombatEntity, defender:ICombatEntity) : AttackResult
-    UseAbility(user:ICombatEntity, target:ICombatEntity, ability:Ability) : AbilityResult
-    Heal(healer:ICombatEntity, amount:int) : HealResult
-}
-@enduml

@@ -1,9 +1,0 @@
-@startuml
-class Paragraph {
-    - _content : string
-    + Paragraph(content:string)
-    + Paragraph(name:string, content:string)
-    + <<override>> Render() : string
-}
-TextBase <|-- Paragraph
-@enduml

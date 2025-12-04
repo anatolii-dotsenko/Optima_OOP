@@ -1,7 +1,0 @@
-@startuml
-abstract class Ability {
-    + Name : string <<get>>
-    # Ability(name:string)
-    + {abstract} CalculateDamage(userStats:CharacterStats, targetStats:CharacterStats) : int
-}
-@enduml

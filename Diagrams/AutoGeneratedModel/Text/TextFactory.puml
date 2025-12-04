@@ -1,9 +1,0 @@
-@startuml
-enum TextType {
-    Heading,
-    Paragraph,
-}
-class TextFactory {
-    + AddElement(context:DocumentContext, type:TextType, nameOrContent:string) : void
-}
-@enduml

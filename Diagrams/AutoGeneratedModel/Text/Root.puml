@@ -1,7 +1,0 @@
-@startuml
-class Root {
-    + Root(name:string)
-    + <<override>> Render() : string
-}
-Container <|-- Root
-@enduml
