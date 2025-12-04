@@ -1,56 +1,54 @@
-````markdown
 # Optima_OOP
 
-A modular C# console application demonstrating **Layered Architecture**, **SOLID principles**, and **Design Patterns** (Command, Strategy, Composite, Factory).
+A modular C# console application showcasing **Layered Architecture**, **SOLID**, and classic **Design Patterns** (Command, Strategy, Composite, Factory).
 
-## 📂 Structure
+## 📂 Project Overview
 
-The solution is divided into two main projects:
+The solution consists of two core projects:
 
-* **`GameModel`**: The core application logic.
-    * **Core**: Pure domain entities (`Character`, `Item`) and interfaces.
-    * **Content**: Game assets (Warriors, Mages, Weapons, Abilities).
-    * **Systems**: Logic for Combat and interactions.
-    * **Text**: A composite-pattern text editor engine.
-    * **Infrastructure**: CLI engine, File I/O, Logging, and Persistence.
-* **`Tests`**: Unit tests utilizing **xUnit** and **Moq**.
+### **`GameModel`**
+This is the application’s backbone and includes:
+
+- **Core** — Domain entities and contracts (`Character`, `Item`, interfaces).
+- **Content** — Game-specific classes (Warriors, Mages, Weapons, Abilities).
+- **Systems** — Combat logic and interaction mechanics.
+- **Text** — A composite-based text document engine.
+- **Infrastructure** — CLI engine, persistence layer, file I/O, and logging.
+
+### **`Tests`**
+Automated test suite built with **xUnit** and **Moq**.
 
 ## 🚀 Getting Started
 
-**Prerequisites:** .NET 10.0 SDK
+**Requirement:** .NET 10.0 SDK
 
-### Run the App
+### Launch the Application
 ```bash
 cd GameModel
 dotnet run
-````
+```
 
-*Follow the on-screen prompt to select **Text** or **Characters** mode.*
+Choose either **Text mode** or **Character mode** from the CLI menu.
 
-### Run Tests
-
+### Execute Tests
 ```bash
 dotnet test
 ```
 
-## 🎮 CLI Commands
+## 🎮 CLI Reference
 
-### Character Mode (RPG)
+### Character Mode (RPG Toolkit)
 
-  * `create <char|item>` - Create new entities interactively.
-  * `ls <char|item> [--id <name>]` - List all objects or inspect specific ones.
-  * `add --char_id <name> --id <item>` - Equip an item to a character.
-  * `act <attack|heal|ability> <actor> <target>` - Perform combat actions.
-  * `save` / `load` - Persist world state to JSON.
+- `create <char|item>` — Interactively create characters or items.  
+- `ls <char|item> [--id <name>]` — List entities or inspect one by ID.  
+- `add --char_id <name> --id <item>` — Equip an item to a character.  
+- `act <attack|heal|ability> <actor> <target>` — Execute combat actions.  
+- `save` / `load` — Store or restore the game state (JSON).
 
-### Text Mode (Editor)
+### Text Mode (Document Editor)
 
-  * `add <heading|paragraph>` - Add content to the document.
-  * `print [--whole]` - Display the current section or full document.
-  * `cd <path>` / `up` - Navigate the document tree.
-  * `rm <name>` - Remove elements.
+- `add <heading|paragraph>` — Insert text elements.  
+- `print [--whole]` — Show the current section or the full document.  
+- `cd <path>` / `up` — Navigate through the document structure.  
+- `rm <name>` — Remove a node from the document tree.
 
-<!-- end list -->
-
-```
-```
