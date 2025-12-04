@@ -21,7 +21,7 @@ namespace GameModel.Core.Entities
         }
 
         // Helper to set initial stats in constructor
-        protected void SetBaseStat(StatType type, int value) => _baseStats.SetStat(type, value);
+        public void SetBaseStat(StatType type, int value) => _baseStats.SetStat(type, value); // protected to public for CharacterMapper Rarity-based stats
 
         public bool IsAlive => GetCurrentHealth() > 0;
 

@@ -10,6 +10,7 @@ using GameModel.Infrastructure.IO;
 using GameModel.Infrastructure.Persistence;
 using GameModel.Systems.Combat;
 using GameModel.Text;
+using GameModel.Infrastructure.Network; // New namespace
 
 namespace GameModel.Infrastructure.Setup
 {
@@ -19,6 +20,7 @@ namespace GameModel.Infrastructure.Setup
         public CliEngine BuildEngine(string[] args)
         {
             // --- 1. Infrastructure Layer ---
+            IGameDataService apiService = new GenshinApiService();
             IDisplayer displayer = new ConsoleDisplayer();
             var repository = new JsonFileRepository("savegame.json");
 
@@ -45,14 +47,17 @@ namespace GameModel.Infrastructure.Setup
             charRegistry.Register(new EquipCommand(worldContext));
             charRegistry.Register(new LsCommand(worldContext));
             charRegistry.Register(new ActCommand(combatSystem, worldContext));
-            
-            // NEW: System Commands
-            charRegistry.Register(new SaveCommand(worldContext, repository, displayer));
-            charRegistry.Register(new LoadCommand(worldContext, repository, displayer));
 
             // Text Mode Setup
             var docContext = new DocumentContext();
             var textFactory = new TextFactory();
+
+            charRegistry.Register(new NetCommand(apiService, worldContext, textFactory, docContext));
+
+            // NEW: System Commands
+            charRegistry.Register(new SaveCommand(worldContext, repository, displayer));
+            charRegistry.Register(new LoadCommand(worldContext, repository, displayer));
+
 
             var textRegistry = new CommandRegistry();
             textRegistry.Register(new HelpCommand(textRegistry));
