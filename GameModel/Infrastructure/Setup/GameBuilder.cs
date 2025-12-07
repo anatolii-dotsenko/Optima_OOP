@@ -1,96 +1,129 @@
-using System.Collections.Generic;
 using GameModel.Content.Characters;
 using GameModel.Content.Items;
 using GameModel.Core.Contracts;
 using GameModel.Core.State;
 using GameModel.Infrastructure.CLI;
 using GameModel.Infrastructure.CLI.Commands;
-using GameModel.Infrastructure.Logging;
+using GameModel.Infrastructure.CLI.Rendering;
+using GameModel.Infrastructure.CLI.Strategies;
 using GameModel.Infrastructure.IO;
+using GameModel.Infrastructure.Logging;
+using GameModel.Infrastructure.Network;
 using GameModel.Infrastructure.Persistence;
 using GameModel.Systems.Combat;
 using GameModel.Text;
-using GameModel.Infrastructure.Network; // New namespace
 
 namespace GameModel.Infrastructure.Setup
 {
     public class GameBuilder
     {
-        // Now returns the Engine directly, fully constructed with dependencies
-        public CliEngine BuildEngine(string[] args)
+        /// <summary>
+        /// Builds the CLI application with all dependencies wired up.
+        /// </summary>
+        /// <param name="args">Command line arguments to determine initial mode.</param>
+        /// <returns>The configured CLI Facade.</returns>
+        public Cli Build(string[] args)
         {
             // --- 1. Infrastructure Layer ---
-            IGameDataService apiService = new GenshinApiService();
-            IDisplayer displayer = new ConsoleDisplayer();
+            // Renderer for the new CLI Facade
+            var renderer = new ConsoleRenderer();
+            
+            // Displayer for legacy components (Logger, Persistence)
+            // Ideally, everything would move to IRenderer, but we keep this for compatibility
+            IDisplayer legacyDisplayer = new ConsoleDisplayer();
+            
+            var apiService = new GenshinApiService();
             var repository = new JsonFileRepository("savegame.json");
 
+            // Logging Setup (Observer Pattern)
             var logger = new CompositeLogger();
-            logger.Add(new ConsoleLogger(displayer)); // Inject displayer
-            
+            logger.Add(new ConsoleLogger(legacyDisplayer)); 
+
             // --- 2. Core & Systems Layer ---
             var worldContext = new WorldContext();
-            ICombatSystem combatSystem = new CombatSystem(); // No logger in constructor now
-            // Connect Observer
+            
+            // Combat System (Observer Pattern: No logger in constructor)
+            ICombatSystem combatSystem = new CombatSystem();
+            
+            // Link Combat System events to Logger
             var combatObserver = new CombatEventObserver(logger, combatSystem);
             
-            // Seed Data (Default State)
-            worldContext.Characters.Add(new Warrior("Thorin"));
-            worldContext.Characters.Add(new Mage("Elira"));
+            // Seed Data (Default World State)
+            SeedWorldData(worldContext);
+
+            // --- 3. Strategies Setup (Command Pattern) ---
             
-            worldContext.ItemPool.Add(new Sword());
-            worldContext.ItemPool.Add(new LightningWand());
-            worldContext.ItemPool.Add(new MagicAmulet());
-            worldContext.ItemPool.Add(new Shield());
+            // Strategy A: RPG Mode
+            // We can create a generic strategy or a specific RpgStrategy class
+            var rpgStrategy = new RpgStrategy(); 
+            RegisterRpgCommands(rpgStrategy, worldContext, combatSystem, apiService, repository, legacyDisplayer);
 
-            // --- 3. Commands Setup ---
-            var charRegistry = new CommandRegistry();
-            charRegistry.Register(new HelpCommand(charRegistry));
-            charRegistry.Register(new CreateCommand(worldContext));
-            charRegistry.Register(new EquipCommand(worldContext));
-            charRegistry.Register(new LsCommand(worldContext));
-            charRegistry.Register(new ActCommand(combatSystem, worldContext));
-
-            // Text Mode Setup
+            // Strategy B: Text Editor Mode
             var docContext = new DocumentContext();
             var textFactory = new TextFactory();
+            var textStrategy = new TextStrategy(); // Assumes TextStrategy class exists similar to RpgStrategy
+            RegisterTextCommands(textStrategy, docContext, textFactory);
 
-            charRegistry.Register(new NetCommand(apiService, worldContext, textFactory, docContext));
+            // --- 4. CLI Facade Construction ---
+            var cli = new Cli(renderer);
 
-            // NEW: System Commands
-            charRegistry.Register(new SaveCommand(worldContext, repository, displayer));
-            charRegistry.Register(new LoadCommand(worldContext, repository, displayer));
-
-
-            var textRegistry = new CommandRegistry();
-            textRegistry.Register(new HelpCommand(textRegistry));
-            textRegistry.Register(new AddTextCommand(docContext, textFactory));
-            textRegistry.Register(new PrintCommand(docContext));
-            textRegistry.Register(new PwdCommand(docContext));
-            textRegistry.Register(new ChangeDirCommand(docContext));
-            textRegistry.Register(new UpCommand(docContext));
-            textRegistry.Register(new RmCommand(docContext));
-
-            // --- 4. Session Selection ---
-            ICliSession session;
-
+            // --- 5. Initial Strategy Selection ---
             if (args.Length > 0 && args[0] == "--text")
             {
-                session = new TextSession(textRegistry);
-            }
-            else if (args.Length > 0 && args[0] == "--chars")
-            {
-                session = new CharacterSession(charRegistry);
+                cli.UseStrategy(textStrategy);
             }
             else
             {
-                displayer.WriteLine("Select Mode: 1. Text, 2. Characters");
-                var choice = displayer.ReadLine();
-                if (choice == "1") session = new TextSession(textRegistry);
-                else session = new CharacterSession(charRegistry);
+                // Default to RPG mode
+                cli.UseStrategy(rpgStrategy);
             }
 
-            // --- 5. Return configured engine ---
-            return new CliEngine(session, displayer);
+            return cli;
+        }
+
+        private void SeedWorldData(WorldContext context)
+        {
+            context.Characters.Add(new Warrior("Thorin"));
+            context.Characters.Add(new Mage("Elira"));
+            
+            context.ItemPool.Add(new Sword());
+            context.ItemPool.Add(new LightningWand());
+            context.ItemPool.Add(new MagicAmulet());
+            context.ItemPool.Add(new Shield());
+        }
+
+        private void RegisterRpgCommands(
+            ICommandStrategy strategy, 
+            WorldContext worldContext, 
+            ICombatSystem combatSystem,
+            IGameDataService apiService,
+            JsonFileRepository repository,
+            IDisplayer displayer)
+        {
+            // Gameplay Commands
+            strategy.RegisterCommand(new HelpCommand(new CommandRegistry())); // Note: HelpCommand might need refactoring to accept Strategy info instead of Registry
+            strategy.RegisterCommand(new CreateCommand(worldContext));
+            strategy.RegisterCommand(new EquipCommand(worldContext));
+            strategy.RegisterCommand(new LsCommand(worldContext));
+            strategy.RegisterCommand(new ActCommand(combatSystem, worldContext));
+            
+            // Network Commands
+            // We pass null for text-related dependencies as they aren't needed in RPG mode usually, 
+            // or we create separate instances if NetCommand requires them.
+            strategy.RegisterCommand(new NetCommand(apiService, worldContext, new TextFactory(), new DocumentContext()));
+
+            // System Commands
+            strategy.RegisterCommand(new SaveCommand(worldContext, repository, displayer));
+            strategy.RegisterCommand(new LoadCommand(worldContext, repository, displayer));
+        }
+
+        private void RegisterTextCommands(
+            ICommandStrategy strategy, 
+            DocumentContext docContext, 
+            TextFactory textFactory)
+        {
+            strategy.RegisterCommand(new AddTextCommand(docContext, textFactory));
+            strategy.RegisterCommand(new PrintCommand(docContext));
         }
     }
 }

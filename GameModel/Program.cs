@@ -19,10 +19,9 @@ static void Main(string[] args)
     }
     else 
     {
-        // Old Game Logic
         var builder = new GameBuilder();
-        var engine = builder.BuildEngine(args);
-        engine.Run();
+        var cli = builder.Build(args); // Changed from BuildEngine to Build
+        cli.RunLoop();
     }
 }        
     }

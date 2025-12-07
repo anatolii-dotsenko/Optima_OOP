@@ -5,10 +5,11 @@ using GameModel.Core.Contracts;
 using GameModel.Core.Data;
 using GameModel.Core.ValueObjects;
 using GameModel.Core.Entities.States;
+using GameModel.Infrastructure.CLI.Rendering;
 
 namespace GameModel.Core.Entities
 {
-    public abstract class Character : ICombatEntity
+    public abstract class Character : ICombatEntity, IRenderable<CharacterData>
     {
         public string Name { get; }
         
@@ -50,6 +51,11 @@ namespace GameModel.Core.Entities
         
         public IEnumerable<Ability> GetAbilities() => _abilities;
 
+
+        public void UseRenderer(IRenderer<CharacterData> renderer)
+        {
+            renderer.Render(this.ToData());
+        }
         public CharacterStats GetStats()
         {
             var finalStats = new CharacterStats(StatsInternal);
