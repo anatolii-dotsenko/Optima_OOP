@@ -7,7 +7,7 @@ namespace GameModel.Content.Abilities
     {
         public Lightning() : base("Lightning") { }
 
-        public override int CalculateDamage(CharacterStats userStats, CharacterStats targetStats)
+        protected override int CalculateDamage(CharacterStats userStats, CharacterStats targetStats)
         {
             // Example logic: Lightning deals moderate damage but pierces some armor
             // (Assuming magic usually ignores armor, we can add flavor here)

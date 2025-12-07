@@ -7,7 +7,7 @@ namespace GameModel.Content.Abilities
     {
         public Fireball() : base("Fireball") { }
 
-        public override int CalculateDamage(CharacterStats userStats, CharacterStats targetStats)
+        protected override int CalculateDamage(CharacterStats userStats, CharacterStats targetStats)
         {
             // Magic damage ignores armor in this implementation
             return 75; 

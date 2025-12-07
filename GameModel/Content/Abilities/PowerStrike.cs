@@ -7,7 +7,7 @@ namespace GameModel.Content.Abilities
     {
         public PowerStrike() : base("Power Strike") { }
 
-        public override int CalculateDamage(CharacterStats userStats, CharacterStats targetStats)
+        protected override int CalculateDamage(CharacterStats userStats, CharacterStats targetStats)
         {
             int attack = userStats.GetStat(StatType.Attack);
             int armor = targetStats.GetStat(StatType.Armor);
