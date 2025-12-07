@@ -1,5 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using GameModel.Core.Contracts;
 using GameModel.Core.Entities;
+using GameModel.Core.ValueObjects;
 
 namespace GameModel.Systems.Combat
 {
@@ -8,6 +12,9 @@ namespace GameModel.Systems.Combat
         private readonly ICombatSystem _combatSystem;
         private readonly ICombatLogger _logger;
         private readonly List<ICombatEntity> _participants = new();
+        
+        // History of turns
+        public List<string> BattleHistory { get; } = new();
 
         public BattleManager(ICombatSystem combatSystem, ICombatLogger logger)
         {
@@ -19,50 +26,42 @@ namespace GameModel.Systems.Combat
 
         public void StartBattle()
         {
-            if (_participants.Count < 2)
-            {
-                _logger.LogMessage("Not enough participants.");
-                return;
-            }
+            // Sort by Speed for turn order
+            _participants.Sort((a, b) => b.GetStats().GetStat(StatType.Speed).CompareTo(a.GetStats().GetStat(StatType.Speed)));
 
-            _logger.LogMessage("=== BATTLE STARTED ===");
-            int turn = 0;
-
+            int turnCount = 1;
             while (_participants.Count(p => p.IsAlive) > 1)
             {
-                var attacker = _participants[turn % _participants.Count];
-                if (!attacker.IsAlive)
+                LogTurnHeader(turnCount);
+
+                foreach (var actor in _participants)
                 {
-                    turn++;
-                    continue;
+                    if (!actor.IsAlive) continue;
+                    
+                    // Simple target selection (first alive enemy)
+                    var target = _participants.FirstOrDefault(p => p != actor && p.IsAlive);
+                    if (target == null) break;
+
+                    ExecuteTurn(actor, target);
                 }
-
-                var target = _participants.FirstOrDefault(p => p != attacker && p.IsAlive);
-                if (target == null) break;
-
-                TakeTurn(attacker, target);
-                turn++;
+                turnCount++;
             }
-
-            var winner = _participants.FirstOrDefault(p => p.IsAlive);
-            _logger.LogMessage($"=== BATTLE ENDED. Winner: {winner?.Name ?? "None"} ===");
         }
 
-        private void TakeTurn(ICombatEntity attacker, ICombatEntity target)
+        private void ExecuteTurn(ICombatEntity actor, ICombatEntity target)
         {
-            // Simple AI Strategy: If ability available, use it (50% chance), else attack
-            var abilities = attacker.GetAbilities().ToList();
-            var random = new Random();
+            // Simple AI vs Player check could go here
+            _combatSystem.Attack(actor, target);
+            
+            // Record to history
+            BattleHistory.Add($"[{DateTime.Now:HH:mm:ss}] {actor.Name} acted against {target.Name}");
+        }
 
-            if (abilities.Any() && random.NextDouble() > 0.5)
-            {
-                var ability = abilities[random.Next(abilities.Count)];
-                _combatSystem.UseAbility(attacker, target, ability);
-            }
-            else
-            {
-                _combatSystem.Attack(attacker, target);
-            }
+        private void LogTurnHeader(int turn)
+        {
+            string msg = $"--- TURN {turn} ---";
+            _logger.LogMessage(msg);
+            BattleHistory.Add(msg);
         }
     }
 }
