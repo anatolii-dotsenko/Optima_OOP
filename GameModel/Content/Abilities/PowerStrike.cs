@@ -1,3 +1,4 @@
+using System;
 using GameModel.Core.Entities;
 using GameModel.Core.ValueObjects;
 
@@ -12,8 +13,10 @@ namespace GameModel.Content.Abilities
             int attack = userStats.GetStat(StatType.Attack);
             int armor = targetStats.GetStat(StatType.Armor);
             
-            // Double damage but subject to armor
+            // Logic: Double damage but subject to flat armor
             int rawDamage = attack * 2;
+            
+            // Returns max of 0 or damage minus armor (No percentage resistance)
             return Math.Max(0, rawDamage - armor);
         }
     }

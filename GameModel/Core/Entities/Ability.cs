@@ -27,6 +27,7 @@ namespace GameModel.Core.Entities
             }
 
             // 2. Abstract Step: Calculate logic (must be implemented)
+            // This is where specific logic (like Magic Damage formulas) will be executed by subclasses.
             int damage = CalculateDamage(userStats, targetStats);
 
             // 3. Hook: Post-calculation effects
