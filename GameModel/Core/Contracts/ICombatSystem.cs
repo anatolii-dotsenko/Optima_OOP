@@ -1,12 +1,17 @@
-using GameModel.Core.Entities;
+using System;
 using GameModel.Core.ValueObjects;
 
 namespace GameModel.Core.Contracts
 {
     public interface ICombatSystem
     {
-        AttackResult Attack(ICombatEntity attacker, ICombatEntity defender);
-        AbilityResult UseAbility(ICombatEntity user, ICombatEntity target, Ability ability);
-        HealResult Heal(ICombatEntity healer, int amount);
+        // Pattern: Observer (Events)
+        event Action<AttackResult> OnAttackPerformed;
+        event Action<AbilityResult> OnAbilityUsed;
+        event Action<HealResult> OnHealed;
+
+        void Attack(ICombatEntity attacker, ICombatEntity defender);
+        void UseAbility(ICombatEntity user, ICombatEntity target, Entities.Ability ability);
+        void Heal(ICombatEntity healer, int amount);
     }
 }
