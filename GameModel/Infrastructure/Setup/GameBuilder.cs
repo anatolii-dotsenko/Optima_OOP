@@ -29,7 +29,9 @@ namespace GameModel.Infrastructure.Setup
             
             // --- 2. Core & Systems Layer ---
             var worldContext = new WorldContext();
-            ICombatSystem combatSystem = new CombatSystem(logger);
+            ICombatSystem combatSystem = new CombatSystem(); // No logger in constructor now
+            // Connect Observer
+            var combatObserver = new CombatEventObserver(logger, combatSystem);
             
             // Seed Data (Default State)
             worldContext.Characters.Add(new Warrior("Thorin"));
