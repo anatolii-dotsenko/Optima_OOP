@@ -4,7 +4,7 @@ using System.Linq;
 using GameModel.Core.Contracts;
 using GameModel.Core.Data;
 using GameModel.Core.ValueObjects;
-using GameModel.Core.Entities.States; // Namespace for States
+using GameModel.Core.Entities.States;
 
 namespace GameModel.Core.Entities
 {
@@ -15,8 +15,8 @@ namespace GameModel.Core.Entities
         // Internal access for States to modify stats
         internal CharacterStats StatsInternal { get; }
         
-        private readonly List<Item> _equipment = new();
-        private readonly List<Ability> _abilities = new();
+        protected readonly List<Item> _equipment = new();
+        protected readonly List<Ability> _abilities = new();
 
         // Pattern: State
         private ICharacterState _state;
@@ -32,20 +32,22 @@ namespace GameModel.Core.Entities
         public void SetState(ICharacterState state) => _state = state;
         
         // Delegating actions to the current State
-        public bool IsAlive => _state is AliveState; // Or strictly check Health > 0
+        public bool IsAlive => _state is AliveState;
         
         public void TakeDamage(int amount) => _state.TakeDamage(this, amount);
         
         public void Heal(int amount) => _state.Heal(this, amount);
 
-        // ... SetBaseStat, EquipItem, LearnAbility unchanged ...
         public void SetBaseStat(StatType type, int value) => StatsInternal.SetStat(type, value);
+
         public void EquipItem(Item item)
         {
             _equipment.Add(item);
             if (item.GrantedAbility != null) _abilities.Add(item.GrantedAbility);
         }
+
         public void LearnAbility(Ability ability) => _abilities.Add(ability);
+        
         public IEnumerable<Ability> GetAbilities() => _abilities;
 
         public CharacterStats GetStats()
@@ -62,7 +64,6 @@ namespace GameModel.Core.Entities
         }
 
         // --- Pattern: Memento ---
-        // Encapsulates the state saving process.
         public IMemento Save()
         {
             return new CharacterMemento(
@@ -77,9 +78,22 @@ namespace GameModel.Core.Entities
         public void Restore(IMemento memento)
         {
             if (memento is not CharacterMemento cm) throw new ArgumentException("Invalid memento");
-            // Restoration logic (simplified, ideally strictly restores state)
+            
             StatsInternal.SetStat(StatType.Health, cm.CurrentHealth);
-            // Note: Full restore requires logic to re-add items by name
+            // Logic to restore stats/items would go here
+        }
+
+        // --- RESTORED METHOD: Export to DTO for Save System ---
+        public virtual CharacterData ToData()
+        {
+            return new CharacterData
+            {
+                Name = this.Name,
+                ClassType = this.GetType().Name,
+                CurrentHealth = StatsInternal.GetStat(StatType.Health),
+                BaseStats = StatsInternal.ToDictionary(),
+                InventoryItems = _equipment.Select(i => i.Name).ToList()
+            };
         }
     }
 }
