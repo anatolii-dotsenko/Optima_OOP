@@ -1,19 +1,29 @@
 using System;
+using GameModel.Infrastructure.IO;
 using GameModel.Infrastructure.Setup;
+using GameModel.States;
 
 namespace GameModel
 {
     class Program
     {
-        static void Main(string[] args)
-        {
-            // The composition root is now cleaner.
-            // All wiring logic is hidden inside GameBuilder.BuildEngine.
-            
-            var builder = new GameBuilder();
-            var engine = builder.BuildEngine(args);
-            
-            engine.Run();
-        }
+static void Main(string[] args)
+{
+    // Check args to switch between Game and File Manager
+    if (args.Length > 0 && args[0] == "--file-manager")
+    {
+        var fs = new RealFileSystem();
+        var displayer = new ConsoleDisplayer();
+        var app = new FileManagerApp(fs, displayer, new DirectoryState());
+        app.Run();
+    }
+    else 
+    {
+        // Old Game Logic
+        var builder = new GameBuilder();
+        var engine = builder.BuildEngine(args);
+        engine.Run();
+    }
+}        
     }
 }
