@@ -1,29 +1,3 @@
-Okay, I will merge the information, format it into a cohesive Markdown Design Document, and check it against the requirements provided.
-
-### Check against Requirements:
-
-1.  **Structure Description (Design Document):**
-    * *Introduction & Architecture:* Covered in Sections 1 & 2.
-    * *Detailed CLI Description:* Covered in Section 3 (Design Patterns & Data Flow).
-2.  **Console Interface Implementation (Topics):**
-    * *Topic 1 (Character Catalog):*
-        * *List characters:* Covered by `ls` command (Browsing).
-        * *General Info:* Covered by `ls --id` (Browsing).
-        * *Create Character:* Covered by `create char` (Creation).
-        * *Save Data:* Covered by `save` command (Persistence).
-    * *Topic 2 (Text Game):*
-        * *Choose Characters:* Implied by `ls` and interaction commands.
-        * *Start Game:* The application starts in RPG mode by default or via argument.
-        * *Game Loop Actions:* Covered by `act` command (Combat Simulation).
-        * *Save State:* Covered by `save` command (Persistence).
-    * *Topic 3 (Custom - Text Editor/File Manager):*
-        * *Operations:* Covered by file navigation (`ls`, `cd`, `open`) and editing (`add`, `rm`, `save`).
-        * *Info Display:* Covered by `print` command.
-
-The content covers all necessary points. Here is the final formatted Design Document.
-
-***
-
 # Design Document: Optima OOP
 
 ## 1. Introduction
@@ -58,11 +32,49 @@ The application adheres to a strict **Layered Architecture**, promoting separati
 
 ---
 
-## 3. Console Interface (CLI) Implementation
+## 3. Business Logic & Game Mechanics
+
+This section details the core mathematical models and rules encapsulated within the **Core** layer.
+
+### 3.1 Character Stats
+Characters possess the following derived attributes:
+* **Health:** Current vitality. Death occurs at $\le 0$.
+* **Attack:** Raw physical power.
+* **Magic Power:** Raw magical aptitude.
+* **Armor:** Flat reduction of incoming physical damage.
+* **Resistance:** Percentage reduction of incoming physical damage.
+* **Magic Resist:** Percentage reduction of incoming magic damage.
+* **Speed:** Determines turn order in `BattleManager`.
+
+### 3.2 Damage Formulas
+
+The system distinguishes between Physical and Magical interactions.
+
+**1. Physical Damage**
+Physical attacks are mitigated by both flat Armor and percentage Resistance.
+$$Damage_{phys} = \max(0, Attack - Armor) \times (1 - Resistance_{\%})$$
+
+**2. Magical Damage**
+Magical abilities ignore Armor but are subject to Magic Resistance, which can be counteracted by Penetration.
+$$Damage_{magic} = \left( BaseDmg \times \max(0, 1 - Res_{target} + Res_{pen}) + Bonus_{power} \right)$$
+
+*Where:*
+* $Res_{target}$ is the target's Magic Resistance (0.0 to 1.0).
+* $Res_{pen}$ is the attacker's Penetration stat (0.0 to 1.0).
+
+### 3.3 Turn System
+The `BattleManager` implements a synchronized turn-based loop:
+1.  **Sorting:** Participants are sorted descending by `Speed`.
+2.  **Execution:** Each entity acts once per cycle.
+3.  **History:** Every action is recorded in a `BattleHistory` log for persistence and review.
+
+---
+
+## 4. Console Interface (CLI) Implementation
 
 The CLI module is the primary presentation layer. It is architected to be highly extensible, allowing for seamless switching between different operational modes (RPG vs. Text Editor).
 
-### 3.1 Design Patterns
+### 4.1 Design Patterns
 
 #### **Facade**
 The `Cli` class acts as the single entry point for the user interface. It abstracts away the complexities of the internal subsystem (argument parsing, strategy selection, rendering) and provides a simple interface for the application root (`RunLoop()`, `ExecCommand()`).
@@ -85,7 +97,7 @@ Rendering logic is decoupled from domain data using a variation of the Visitor p
 * **Mechanism:** Domain objects implement `IRenderable<T>` and accept a renderer via `UseRenderer(IRenderer<T> renderer)`. The object then passes its data (DTO) back to the renderer.
 * **Benefit:** The `Character` class does not need to know about `System.Console`. The `ConsoleRenderer` handles all formatting (colors, indentation, tables), making the system adaptable to other outputs (e.g., File, GUI) in the future.
 
-### 3.2 Data Flow
+### 4.2 Data Flow
 
 1.  **Input:** User enters a command string (e.g., `act attack Thorin Orc`).
 2.  **Parser:** The `ArgParser` component breaks the string into the command key (`act`), arguments, and flags.
@@ -96,7 +108,7 @@ Rendering logic is decoupled from domain data using a variation of the Visitor p
 
 ---
 
-## 4. Functionality (User Stories)
+## 5. Functionality (User Stories)
 
 The application supports two distinct functional domains based on the active Strategy.
 
