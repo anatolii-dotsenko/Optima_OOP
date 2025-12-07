@@ -7,28 +7,29 @@ namespace GameModel.Systems.Combat
 {
     public class CombatSystem : ICombatSystem
     {
-        // Observer: Events for subscribers
         public event Action<AttackResult>? OnAttackPerformed;
         public event Action<AbilityResult>? OnAbilityUsed;
         public event Action<HealResult>? OnHealed;
-
-        // Note: Removed direct ICombatLogger dependency to decouple logic from IO.
 
         public void Attack(ICombatEntity attacker, ICombatEntity defender)
         {
             var attStats = attacker.GetStats();
             var defStats = defender.GetStats();
 
-            int atk = attStats.GetStat(StatType.Attack);
-            int arm = defStats.GetStat(StatType.Armor);
-            int damage = Math.Max(0, atk - arm);
-
-            defender.TakeDamage(damage);
-
-            var result = new AttackResult(attacker.Name, defender.Name, damage);
+            // 1. Physical Damage Calculation
+            int attack = attStats.GetStat(StatType.Attack);
+            int armor = defStats.GetStat(StatType.Armor);
             
-            // Notify Observers
-            OnAttackPerformed?.Invoke(result);
+            // Resistance is stored as Int (e.g., 20 = 20%). Converted to decimal for math.
+            double resistance = defStats.GetStat(StatType.Resistance) / 100.0;
+
+            // Formula: (Atk - Armor) * (1 - Res)
+            int flatDamage = Math.Max(0, attack - armor);
+            int finalDamage = (int)(flatDamage * (1.0 - resistance));
+
+            defender.TakeDamage(finalDamage);
+
+            OnAttackPerformed?.Invoke(new AttackResult(attacker.Name, defender.Name, finalDamage));
         }
 
         public void UseAbility(ICombatEntity user, ICombatEntity target, Ability ability)
@@ -36,23 +37,17 @@ namespace GameModel.Systems.Combat
             var userStats = user.GetStats();
             var targetStats = target.GetStats();
 
-            // Ability uses Template Method internally
+            // Delegate calculation to Ability (Template Method), then apply results
             int damage = ability.Apply(userStats, targetStats);
             target.TakeDamage(damage);
 
-            var result = new AbilityResult(user.Name, target.Name, ability.Name, damage);
-            
-            // Notify Observers
-            OnAbilityUsed?.Invoke(result);
+            OnAbilityUsed?.Invoke(new AbilityResult(user.Name, target.Name, ability.Name, damage));
         }
 
         public void Heal(ICombatEntity healer, int amount)
         {
             healer.Heal(amount);
-            var result = new HealResult(healer.Name, amount);
-            
-            // Notify Observers
-            OnHealed?.Invoke(result);
+            OnHealed?.Invoke(new HealResult(healer.Name, amount));
         }
     }
 }
