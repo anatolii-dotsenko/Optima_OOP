@@ -52,7 +52,7 @@ The system distinguishes between Physical and Magical interactions.
 
 **1. Physical Damage**
 Physical attacks are mitigated by both flat Armor and percentage Resistance.
-$$Damage_{phys} = \max(0, Attack - Armor) \times (1 - Resistance_{\\%})$$
+$$Damage_{phys} = \max(0, Attack - Armor) \times (1 - Resistance)$$
 
 **2. Magical Damage**
 Magical abilities ignore Armor but are subject to Magic Resistance, which can be counteracted by Penetration.
