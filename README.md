@@ -18,11 +18,11 @@ Navigate to the `GameModel` directory:
 ```bash
 cd GameModel
 
-# Interactive Mode (Select RPG or Text via menu)
+# Game Mode
 dotnet run
 
-# Launch directly into Text Editor
-dotnet run -- --text
+# Text Mode:
+dotnet run --text
 
-# Launch File Manager Mode
-dotnet run -- --file-manager
+# File Manager:
+dotnet run --file-manager
