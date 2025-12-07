@@ -4,59 +4,53 @@ using System.Linq;
 using GameModel.Core.Contracts;
 using GameModel.Core.Data;
 using GameModel.Core.ValueObjects;
+using GameModel.Core.Entities.States; // Namespace for States
 
 namespace GameModel.Core.Entities
 {
     public abstract class Character : ICombatEntity
     {
         public string Name { get; }
-        private readonly CharacterStats _baseStats;
+        
+        // Internal access for States to modify stats
+        internal CharacterStats StatsInternal { get; }
+        
         private readonly List<Item> _equipment = new();
         private readonly List<Ability> _abilities = new();
+
+        // Pattern: State
+        private ICharacterState _state;
 
         protected Character(string name)
         {
             Name = name;
-            _baseStats = new CharacterStats();
+            StatsInternal = new CharacterStats();
+            _state = new AliveState(); // Default state
         }
 
-        // Helper to set initial stats in constructor
-        public void SetBaseStat(StatType type, int value) => _baseStats.SetStat(type, value); // protected to public for CharacterMapper Rarity-based stats
+        // State Management
+        public void SetState(ICharacterState state) => _state = state;
+        
+        // Delegating actions to the current State
+        public bool IsAlive => _state is AliveState; // Or strictly check Health > 0
+        
+        public void TakeDamage(int amount) => _state.TakeDamage(this, amount);
+        
+        public void Heal(int amount) => _state.Heal(this, amount);
 
-        public bool IsAlive => GetCurrentHealth() > 0;
-
-        private int GetCurrentHealth() => _baseStats.GetStat(StatType.Health);
-
-        public void TakeDamage(int amount)
-        {
-            int current = GetCurrentHealth();
-            _baseStats.SetStat(StatType.Health, Math.Max(0, current - amount));
-        }
-
-        public void Heal(int amount)
-        {
-            int current = GetCurrentHealth();
-            int max = _baseStats.GetStat(StatType.MaxHealth); 
-            _baseStats.SetStat(StatType.Health, Math.Min(max, current + amount));
-        }
-
+        // ... SetBaseStat, EquipItem, LearnAbility unchanged ...
+        public void SetBaseStat(StatType type, int value) => StatsInternal.SetStat(type, value);
         public void EquipItem(Item item)
         {
             _equipment.Add(item);
-            if (item.GrantedAbility != null)
-            {
-                _abilities.Add(item.GrantedAbility);
-            }
+            if (item.GrantedAbility != null) _abilities.Add(item.GrantedAbility);
         }
-
         public void LearnAbility(Ability ability) => _abilities.Add(ability);
+        public IEnumerable<Ability> GetAbilities() => _abilities;
 
         public CharacterStats GetStats()
         {
-            // Clone base stats
-            var finalStats = new CharacterStats(_baseStats);
-
-            // Apply item modifiers
+            var finalStats = new CharacterStats(StatsInternal);
             foreach (var item in _equipment)
             {
                 foreach (var mod in item.Modifiers)
@@ -67,19 +61,25 @@ namespace GameModel.Core.Entities
             return finalStats;
         }
 
-        public IEnumerable<Ability> GetAbilities() => _abilities;
-
-        // --- NEW: Export to DTO ---
-        public virtual CharacterData ToData()
+        // --- Pattern: Memento ---
+        // Encapsulates the state saving process.
+        public IMemento Save()
         {
-            return new CharacterData
-            {
-                Name = this.Name,
-                ClassType = this.GetType().Name,
-                CurrentHealth = this.GetCurrentHealth(),
-                BaseStats = _baseStats.ToDictionary(),
-                InventoryItems = _equipment.Select(i => i.Name).ToList()
-            };
+            return new CharacterMemento(
+                Name, 
+                this.GetType().Name, 
+                StatsInternal.GetStat(StatType.Health), 
+                StatsInternal.ToDictionary(),
+                _equipment.Select(i => i.Name).ToList()
+            );
+        }
+
+        public void Restore(IMemento memento)
+        {
+            if (memento is not CharacterMemento cm) throw new ArgumentException("Invalid memento");
+            // Restoration logic (simplified, ideally strictly restores state)
+            StatsInternal.SetStat(StatType.Health, cm.CurrentHealth);
+            // Note: Full restore requires logic to re-add items by name
         }
     }
 }
