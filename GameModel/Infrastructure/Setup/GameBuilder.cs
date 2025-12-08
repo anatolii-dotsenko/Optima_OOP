@@ -27,17 +27,17 @@ namespace GameModel.Infrastructure.Setup
             // --- 1. Infrastructure Layer ---
             // Renderer for the new CLI Facade
             var renderer = new ConsoleRenderer();
-            
+            var imageCache = new ImageCacheService(); // New Service
+            IGameDataService apiService = new GenshinApiService(imageCache); // inject dependency
             // Displayer for legacy components (Logger, Persistence)
             // Ideally, everything would move to IRenderer, but we keep this for compatibility
             IDisplayer legacyDisplayer = new ConsoleDisplayer();
             
-            var apiService = new GenshinApiService();
             var repository = new JsonFileRepository("savegame.json");
 
             // Logging Setup (Observer Pattern)
             var logger = new CompositeLogger();
-            logger.Add(new ConsoleLogger(legacyDisplayer)); 
+            logger.Add(new ConsoleLogger(legacyDisplayer));
 
             // --- 2. Core & Systems Layer ---
             var worldContext = new WorldContext();

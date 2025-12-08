@@ -5,6 +5,7 @@ using GameModel.Core.Contracts;
 using GameModel.Core.State;
 using GameModel.Core.Data;
 using GameModel.Infrastructure.Persistence;
+using GameModel.Core.Entities;
 
 namespace GameModel.Infrastructure.CLI.Commands
 {
@@ -63,18 +64,18 @@ namespace GameModel.Infrastructure.CLI.Commands
                 return;
             }
 
-            // Note: In a full implementation, we would need a Factory to recreate specific 
-            // subclasses (Mage/Warrior) based on ClassType string and restore Items.
-            // For this demonstration, we will just log the data found.
-            
-            _displayer.WriteLine($"Found save from: {data.SaveDate}");
-            _displayer.WriteLine($"Contains {data.Characters.Count} characters:");
-            foreach(var charData in data.Characters)
+            // clear current world state
+            _context.Characters.Clear();
+
+            // rehydrate characters from data
+            foreach (var charData in data.Characters)
             {
-                _displayer.WriteLine($" - {charData.Name} ({charData.ClassType})");
+                var character = CharacterMapper.MapFromData(charData);
+                _context.Characters.Add(character);
+                _displayer.WriteLine($"restored character: {character.Name} ({character.GetType().Name})");
             }
-            
-            _displayer.WriteLine("State loaded (Mock restore).");
+
+            _displayer.WriteLine($"game state loaded successfully from {data.SaveDate}.");
         }
     }
 }
