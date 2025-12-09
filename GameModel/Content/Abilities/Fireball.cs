@@ -1,4 +1,3 @@
-using System;
 using GameModel.Core.Entities;
 using GameModel.Core.ValueObjects;
 

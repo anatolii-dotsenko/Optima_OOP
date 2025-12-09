@@ -1,4 +1,3 @@
-using System;
 using GameModel.Core.Contracts;
 using GameModel.Core.Entities;
 using GameModel.Core.ValueObjects;
@@ -19,7 +18,7 @@ namespace GameModel.Systems.Combat
             // 1. Physical Damage Calculation
             int attack = attStats.GetStat(StatType.Attack);
             int armor = defStats.GetStat(StatType.Armor);
-            
+
             // Resistance is stored as Int (e.g., 20 = 20%). Converted to decimal for math.
             double resistance = defStats.GetStat(StatType.Resistance) / 100.0;
 

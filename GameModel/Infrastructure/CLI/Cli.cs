@@ -1,5 +1,3 @@
-using System;
-using GameModel.Core.Entities;
 using GameModel.Infrastructure.CLI.Rendering;
 using GameModel.Infrastructure.CLI.Strategies;
 
@@ -78,10 +76,10 @@ namespace GameModel.Infrastructure.CLI
             while (true)
             {
                 Console.Write($"{_currentStrategy?.Name ?? "CLI"} > ");
-                
+
                 // Fix: Handle possible null from ReadLine
                 string? input = Console.ReadLine();
-                
+
                 if (string.IsNullOrWhiteSpace(input)) continue;
                 if (input.Trim().ToLower() == "exit") break;
 

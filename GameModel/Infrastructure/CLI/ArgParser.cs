@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Text;
 
 namespace GameModel.Infrastructure.CLI
@@ -7,11 +6,11 @@ namespace GameModel.Infrastructure.CLI
     {
         public (string Command, string[] Args, Dictionary<string, string> Options) Parse(string input)
         {
-            if (string.IsNullOrWhiteSpace(input)) 
+            if (string.IsNullOrWhiteSpace(input))
                 return (string.Empty, Array.Empty<string>(), new Dictionary<string, string>());
 
             var parts = ParseArguments(input);
-            if (parts.Count == 0) 
+            if (parts.Count == 0)
                 return (string.Empty, Array.Empty<string>(), new Dictionary<string, string>());
 
             string command = parts[0].ToLower();
@@ -27,7 +26,7 @@ namespace GameModel.Infrastructure.CLI
                     if (i + 1 < parts.Count && !parts[i + 1].StartsWith("--"))
                     {
                         val = parts[i + 1];
-                        i++; 
+                        i++;
                     }
                     options[key] = val;
                 }

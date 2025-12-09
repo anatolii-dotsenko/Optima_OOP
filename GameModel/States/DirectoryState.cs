@@ -1,6 +1,3 @@
-using System;
-using System.IO;
-using System.Linq;
 using GameModel.Core.Contracts;
 
 namespace GameModel.States
@@ -9,8 +6,8 @@ namespace GameModel.States
     {
         public string Name => "DIR";
 
-        public void Render(IDisplayer displayer) 
-        { 
+        public void Render(IDisplayer displayer)
+        {
             displayer.WriteLine("--- Directory Mode ---");
             displayer.WriteLine("Commands: ls, cd <path>, open <file>, exit");
         }
@@ -29,7 +26,7 @@ namespace GameModel.States
                         var path = context.FileSystem.GetCurrentDirectory();
                         var dirs = context.FileSystem.GetDirectories(path);
                         var files = context.FileSystem.GetFiles(path);
-                        
+
                         foreach (var d in dirs)
                             System.Console.WriteLine($"[DIR] {Path.GetFileName(d)}");
                         foreach (var f in files)
@@ -47,7 +44,7 @@ namespace GameModel.States
                             var content = context.FileSystem.ReadAllText(arg);
                             context.TransitionTo(new FileViewState(arg, content));
                         }
-                        else 
+                        else
                         {
                             System.Console.WriteLine("File not found.");
                         }

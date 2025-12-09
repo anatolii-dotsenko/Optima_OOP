@@ -1,4 +1,3 @@
-using System;
 using GameModel.Core.ValueObjects;
 
 namespace GameModel.Core.Entities.States
@@ -15,7 +14,7 @@ namespace GameModel.Core.Entities.States
 
             if (newHealth <= 0)
             {
-                // Transition to Dead State
+                // transition to dead state
                 context.SetState(new DeadState());
             }
         }

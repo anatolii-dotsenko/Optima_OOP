@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using GameModel.Content.Abilities;
 using GameModel.Content.Characters;
 using GameModel.Content.Items;
 using GameModel.Core.Contracts;
@@ -42,13 +38,13 @@ namespace GameModel.Infrastructure.CLI.Commands
             if (args.Length == 0) { Console.WriteLine(Description); return; }
 
             string type = args[0].ToLower();
-            
+
             if (type == "char")
             {
                 // Interactive dialog for character creation
                 Console.Write($"Enter character class ({string.Join("/", _characterFactories.Keys)}): ");
                 string? cls = Console.ReadLine()?.Trim();
-                
+
                 if (string.IsNullOrEmpty(cls) || !_characterFactories.ContainsKey(cls))
                 {
                     Console.WriteLine($"Unknown class. Available: {string.Join(", ", _characterFactories.Keys)}");
@@ -60,7 +56,7 @@ namespace GameModel.Infrastructure.CLI.Commands
 
                 var character = _characterFactories[cls](name);
                 _context.Characters.Add(character);
-                
+
                 Console.WriteLine($"Character '{name}' ({cls}) created successfully.");
             }
             else if (type == "item")
@@ -77,7 +73,7 @@ namespace GameModel.Infrastructure.CLI.Commands
 
                 var item = _itemFactories[it]();
                 _context.ItemPool.Add(item);
-                
+
                 Console.WriteLine($"Item '{item.Name}' created successfully.");
             }
             else if (type == "ability")
@@ -146,7 +142,7 @@ namespace GameModel.Infrastructure.CLI.Commands
                 {
                     // Filter if --id is provided
                     if (idFilter != null && !c.Name.Equals(idFilter, StringComparison.OrdinalIgnoreCase)) continue;
-                    
+
                     Console.WriteLine($"Name: {c.Name}, HP: {c.GetStats().GetStat(StatType.Health)}/{c.GetStats().GetStat(StatType.MaxHealth)}");
                     if (idFilter != null) // Detailed view
                     {

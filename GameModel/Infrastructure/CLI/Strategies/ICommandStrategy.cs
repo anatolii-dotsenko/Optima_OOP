@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using GameModel.Core.Contracts;
 
 namespace GameModel.Infrastructure.CLI.Strategies

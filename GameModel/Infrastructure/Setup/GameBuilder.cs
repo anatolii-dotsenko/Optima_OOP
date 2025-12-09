@@ -32,7 +32,7 @@ namespace GameModel.Infrastructure.Setup
             // Displayer for legacy components (Logger, Persistence)
             // Ideally, everything would move to IRenderer, but we keep this for compatibility
             IDisplayer legacyDisplayer = new ConsoleDisplayer();
-            
+
             var repository = new JsonFileRepository("savegame.json");
 
             // Logging Setup (Observer Pattern)
@@ -41,21 +41,21 @@ namespace GameModel.Infrastructure.Setup
 
             // --- 2. Core & Systems Layer ---
             var worldContext = new WorldContext();
-            
+
             // Combat System (Observer Pattern: No logger in constructor)
             ICombatSystem combatSystem = new CombatSystem();
-            
+
             // Link Combat System events to Logger
             var combatObserver = new CombatEventObserver(logger, combatSystem);
-            
+
             // Seed Data (Default World State)
             SeedWorldData(worldContext);
 
             // --- 3. Strategies Setup (Command Pattern) ---
-            
+
             // Strategy A: RPG Mode
             // We can create a generic strategy or a specific RpgStrategy class
-            var rpgStrategy = new RpgStrategy(); 
+            var rpgStrategy = new RpgStrategy();
             RegisterRpgCommands(rpgStrategy, worldContext, combatSystem, apiService, repository, legacyDisplayer);
 
             // Strategy B: Text Editor Mode
@@ -85,7 +85,7 @@ namespace GameModel.Infrastructure.Setup
         {
             context.Characters.Add(new Warrior("Thorin"));
             context.Characters.Add(new Mage("Elira"));
-            
+
             context.ItemPool.Add(new Sword());
             context.ItemPool.Add(new LightningWand());
             context.ItemPool.Add(new MagicAmulet());
@@ -93,8 +93,8 @@ namespace GameModel.Infrastructure.Setup
         }
 
         private void RegisterRpgCommands(
-            ICommandStrategy strategy, 
-            WorldContext worldContext, 
+            ICommandStrategy strategy,
+            WorldContext worldContext,
             ICombatSystem combatSystem,
             IGameDataService apiService,
             JsonFileRepository repository,
@@ -106,7 +106,7 @@ namespace GameModel.Infrastructure.Setup
             strategy.RegisterCommand(new EquipCommand(worldContext));
             strategy.RegisterCommand(new LsCommand(worldContext));
             strategy.RegisterCommand(new ActCommand(combatSystem, worldContext));
-            
+
             // Network Commands
             // We pass null for text-related dependencies as they aren't needed in RPG mode usually, 
             // or we create separate instances if NetCommand requires them.
@@ -118,8 +118,8 @@ namespace GameModel.Infrastructure.Setup
         }
 
         private void RegisterTextCommands(
-            ICommandStrategy strategy, 
-            DocumentContext docContext, 
+            ICommandStrategy strategy,
+            DocumentContext docContext,
             TextFactory textFactory)
         {
             strategy.RegisterCommand(new AddTextCommand(docContext, textFactory));

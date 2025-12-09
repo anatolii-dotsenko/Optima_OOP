@@ -1,6 +1,5 @@
-using System;
-using GameModel.Core.Entities;
 using GameModel.Core.Data;
+using GameModel.Core.Entities;
 
 namespace GameModel.Infrastructure.CLI.Rendering
 {
@@ -8,7 +7,7 @@ namespace GameModel.Infrastructure.CLI.Rendering
     public class ConsoleRenderer : IConsoleRenderer, IRenderer<CharacterData>, IRenderer<Item>
     {
         public void WriteMessage(string message) => Console.WriteLine(message);
-        
+
         public void WriteError(string message)
         {
             Console.ForegroundColor = ConsoleColor.Red;
@@ -26,9 +25,9 @@ namespace GameModel.Infrastructure.CLI.Rendering
             Console.WriteLine($"CHARACTER: {data.Name} [{data.ClassType}]");
             Console.ResetColor();
             Console.WriteLine($"HP: {data.CurrentHealth} | Status: {(data.CurrentHealth > 0 ? "Alive" : "Dead")}");
-            
+
             Console.WriteLine("Stats:");
-            foreach(var stat in data.BaseStats)
+            foreach (var stat in data.BaseStats)
             {
                 Console.WriteLine($"  - {stat.Key}: {stat.Value}");
             }

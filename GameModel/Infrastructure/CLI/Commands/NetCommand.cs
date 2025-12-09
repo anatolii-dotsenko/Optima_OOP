@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks; // Important for async
 using GameModel.Core.Contracts;
 using GameModel.Core.Entities;
 using GameModel.Core.State;
@@ -50,7 +46,7 @@ namespace GameModel.Infrastructure.CLI.Commands
             {
                 string name = args[1];
                 var dto = await _apiService.GetCharacterDetailsAsync(name);
-                
+
                 if (dto != null)
                 {
                     // Format and display character info using Text
@@ -58,11 +54,11 @@ namespace GameModel.Infrastructure.CLI.Commands
                     var root = new Root("Preview");
                     var heading = new Heading(dto.Name, 1, root);
                     root.AddChild(heading);
-                    
+
                     heading.AddChild(new Paragraph($"Rarity: {dto.Rarity} Stars"));
                     heading.AddChild(new Paragraph($"Vision: {dto.Vision}"));
                     heading.AddChild(new Paragraph($"Description: {dto.Description}"));
-                    
+
                     Console.WriteLine(root.Render());
                 }
                 else
@@ -74,7 +70,7 @@ namespace GameModel.Infrastructure.CLI.Commands
             {
                 string name = args[1];
                 var dto = await _apiService.GetCharacterDetailsAsync(name);
-                
+
                 if (dto != null)
                 {
                     var newChar = CharacterMapper.MapToGameEntity(dto);

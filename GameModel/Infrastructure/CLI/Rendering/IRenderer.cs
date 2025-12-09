@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace GameModel.Infrastructure.CLI.Rendering
 {
     // generic interface for rendering data of type T

@@ -1,7 +1,5 @@
-using System;
-using System.IO;
-using System.Text.Json;
 using GameModel.Core.Data;
+using System.Text.Json;
 
 namespace GameModel.Infrastructure.Persistence
 {
@@ -32,7 +30,7 @@ namespace GameModel.Infrastructure.Persistence
         public SaveBase Load()
         {
             if (!File.Exists(_filePath)) return new SaveBase();
-            
+
             try
             {
                 string json = File.ReadAllText(_filePath);

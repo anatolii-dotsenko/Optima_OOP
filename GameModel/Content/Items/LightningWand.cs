@@ -8,10 +8,10 @@ namespace GameModel.Content.Items
     {
         public LightningWand() : base("Lightning Wand")
         {
-            // Wands might give less raw attack than swords, but grant powerful spells
-            AddModifier(StatType.Attack, 5); 
-            
-            // This item grants the new ability
+            // wands might give less raw attack than swords, but grant powerful spells
+            AddModifier(StatType.Attack, 5);
+
+            // this item grants the new ability
             GrantedAbility = new Lightning();
         }
     }

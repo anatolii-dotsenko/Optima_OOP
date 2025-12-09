@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using GameModel.Content.Characters;
 using GameModel.Content.Items;
 using GameModel.Core.Data;
@@ -28,8 +26,8 @@ namespace GameModel.Core.Entities
             }
 
             // Generate stats based on Rarity (3-5 stars) to make imported characters unique
-            int baseHp = dto.Rarity * 30; 
-            int baseAtk = dto.Rarity * 5; 
+            int baseHp = dto.Rarity * 30;
+            int baseAtk = dto.Rarity * 5;
             int baseDef = dto.Rarity * 2;
 
             // Use the exposed method to override default class stats
@@ -37,7 +35,7 @@ namespace GameModel.Core.Entities
             character.SetBaseStat(StatType.Health, baseHp);
             character.SetBaseStat(StatType.Attack, baseAtk);
             character.SetBaseStat(StatType.Armor, baseDef);
-                        
+
             return character;
         }
 
@@ -73,13 +71,13 @@ namespace GameModel.Core.Entities
             // In a larger system, this would be a separate ItemFactory or ID-based lookup.
             foreach (var itemName in data.InventoryItems)
             {
-                if (itemName.Contains("Sword", StringComparison.OrdinalIgnoreCase)) 
+                if (itemName.Contains("Sword", StringComparison.OrdinalIgnoreCase))
                     character.EquipItem(new Sword());
-                else if (itemName.Contains("Shield", StringComparison.OrdinalIgnoreCase)) 
+                else if (itemName.Contains("Shield", StringComparison.OrdinalIgnoreCase))
                     character.EquipItem(new Shield());
-                else if (itemName.Contains("Wand", StringComparison.OrdinalIgnoreCase)) 
+                else if (itemName.Contains("Wand", StringComparison.OrdinalIgnoreCase))
                     character.EquipItem(new LightningWand());
-                else if (itemName.Contains("Amulet", StringComparison.OrdinalIgnoreCase)) 
+                else if (itemName.Contains("Amulet", StringComparison.OrdinalIgnoreCase))
                     character.EquipItem(new MagicAmulet());
             }
 

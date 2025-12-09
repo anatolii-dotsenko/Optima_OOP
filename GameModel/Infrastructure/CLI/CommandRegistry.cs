@@ -1,5 +1,5 @@
-using System.Reflection;
 using GameModel.Core.Contracts;
+using System.Reflection;
 
 namespace GameModel.Infrastructure.CLI
 {
@@ -34,7 +34,7 @@ namespace GameModel.Infrastructure.CLI
         {
             return _commands.Values;
         }
-        
+
         /// <summary>
         /// Optional: helper to scan assembly for ICommand types.
         /// In this architecture, we prefer manual registration in GameBuilder 

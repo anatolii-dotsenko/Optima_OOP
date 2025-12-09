@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using GameModel.Core.Contracts;
 using GameModel.Text;
 
@@ -22,8 +19,8 @@ namespace GameModel.Infrastructure.CLI.Commands
         public void Execute(string[] args, Dictionary<string, string> options)
         {
             if (args.Length < 1) { Console.WriteLine(Description); return; }
-            
-            string typeArg = args[0].ToLower(); 
+
+            string typeArg = args[0].ToLower();
 
             TextType type;
             if (typeArg == "heading") type = TextType.Heading;
@@ -38,7 +35,7 @@ namespace GameModel.Infrastructure.CLI.Commands
             string content = Console.ReadLine() ?? "";
 
             _factory.AddElement(_context, type, content);
-            
+
             Console.WriteLine($"Added {type} '{content}'.");
         }
     }
@@ -57,10 +54,10 @@ namespace GameModel.Infrastructure.CLI.Commands
             bool showId = options.ContainsKey("id");
 
             IText target = whole ? _context.Root : _context.CurrentContainer;
-            
+
             Console.WriteLine($"--- Content of {(whole ? "Whole Document" : target.Name)} ---");
             if (showId) Console.WriteLine($"[ID: {target.Id}]");
-            
+
             Console.WriteLine(target.Render());
         }
     }
@@ -126,14 +123,14 @@ namespace GameModel.Infrastructure.CLI.Commands
                 string? ans = Console.ReadLine();
                 if (ans?.ToLower() == "y")
                 {
-                    if (_context.CurrentContainer.Parent == null) 
-                    { 
-                        Console.WriteLine("Cannot remove the Root container."); 
-                        return; 
+                    if (_context.CurrentContainer.Parent == null)
+                    {
+                        Console.WriteLine("Cannot remove the Root container.");
+                        return;
                     }
-                    
+
                     var parent = _context.CurrentContainer.Parent;
-                    parent.RemoveChild(_context.CurrentContainer.Name); 
+                    parent.RemoveChild(_context.CurrentContainer.Name);
                     _context.CurrentContainer = parent;
                     Console.WriteLine("Current container removed. Moved up to parent.");
                 }
@@ -146,9 +143,9 @@ namespace GameModel.Infrastructure.CLI.Commands
             else
             {
                 string target = args[0];
-                if (_context.CurrentContainer.RemoveChild(target)) 
+                if (_context.CurrentContainer.RemoveChild(target))
                     Console.WriteLine($"Child element '{target}' removed successfully.");
-                else 
+                else
                     Console.WriteLine($"Child '{target}' not found in current container.");
             }
         }

@@ -1,4 +1,3 @@
-using System;
 using GameModel.Core.Contracts;
 
 namespace GameModel.Infrastructure.IO

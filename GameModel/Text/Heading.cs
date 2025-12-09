@@ -16,7 +16,7 @@ namespace GameModel.Text
             var sb = new StringBuilder();
             string indent = new string('#', _rank + 1);
             sb.AppendLine($"{indent} {Name}");
-            
+
             foreach (var child in _children)
                 sb.AppendLine(child.Render());
 

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using GameModel.Core.Contracts;
 using GameModel.Core.State;
 
@@ -22,9 +19,9 @@ namespace GameModel.Infrastructure.CLI.Commands
 
         public void Execute(string[] args, Dictionary<string, string> options)
         {
-            if (args.Length < 3) 
+            if (args.Length < 3)
             {
-                Console.WriteLine(Description); 
+                Console.WriteLine(Description);
                 return;
             }
 
@@ -46,7 +43,7 @@ namespace GameModel.Infrastructure.CLI.Commands
                 case "attack":
                     _system.Attack(actor, target);
                     break;
-                
+
                 case "heal":
                     _system.Heal(target, 10); // Standard heal amount for demo
                     break;
@@ -58,9 +55,9 @@ namespace GameModel.Infrastructure.CLI.Commands
                         Console.WriteLine("Error: Please specify the ability name using '--id <AbilityName>'.");
                         return;
                     }
-                    
+
                     var ability = actor.GetAbilities().FirstOrDefault(a => a.Name.Equals(abilityName, StringComparison.OrdinalIgnoreCase));
-                    
+
                     if (ability != null)
                     {
                         _system.UseAbility(actor, target, ability);

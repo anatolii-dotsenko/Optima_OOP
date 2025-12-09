@@ -1,8 +1,3 @@
-using System;
-using System.IO;
-using System.Net.Http;
-using System.Threading.Tasks;
-
 namespace GameModel.Infrastructure.IO
 {
     // handles downloading and caching of character images to local storage
@@ -16,7 +11,7 @@ namespace GameModel.Infrastructure.IO
             // use a hidden folder in the current directory for cache
             _cacheDir = Path.Combine(Directory.GetCurrentDirectory(), ".cache", "images");
             _httpClient = new HttpClient();
-            
+
             if (!Directory.Exists(_cacheDir))
             {
                 Directory.CreateDirectory(_cacheDir);

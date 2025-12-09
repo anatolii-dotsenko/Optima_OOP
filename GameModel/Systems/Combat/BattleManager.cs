@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using GameModel.Core.Contracts;
-using GameModel.Core.Entities;
 using GameModel.Core.ValueObjects;
 
 namespace GameModel.Systems.Combat
@@ -12,7 +8,7 @@ namespace GameModel.Systems.Combat
         private readonly ICombatSystem _combatSystem;
         private readonly ICombatLogger _logger;
         private readonly List<ICombatEntity> _participants = new();
-        
+
         // History of turns
         public List<string> BattleHistory { get; } = new();
 
@@ -37,7 +33,7 @@ namespace GameModel.Systems.Combat
                 foreach (var actor in _participants)
                 {
                     if (!actor.IsAlive) continue;
-                    
+
                     // Simple target selection (first alive enemy)
                     var target = _participants.FirstOrDefault(p => p != actor && p.IsAlive);
                     if (target == null) break;
@@ -52,7 +48,7 @@ namespace GameModel.Systems.Combat
         {
             // Simple AI vs Player check could go here
             _combatSystem.Attack(actor, target);
-            
+
             // Record to history
             BattleHistory.Add($"[{DateTime.Now:HH:mm:ss}] {actor.Name} acted against {target.Name}");
         }

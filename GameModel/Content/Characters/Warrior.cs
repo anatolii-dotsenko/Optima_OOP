@@ -12,7 +12,7 @@ namespace GameModel.Content.Characters
             SetBaseStat(StatType.Health, 130);
             SetBaseStat(StatType.Attack, 15);
             SetBaseStat(StatType.Armor, 10);
-            
+
             LearnAbility(new PowerStrike());
         }
     }

@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text.Json;
-using System.Threading.Tasks;
 using GameModel.Core.Contracts;
-using GameModel.Infrastructure.Network.Dtos;
 using GameModel.Infrastructure.IO; // Added namespace
+using GameModel.Infrastructure.Network.Dtos;
+using System.Text.Json;
 
 namespace GameModel.Infrastructure.Network
 {
@@ -55,7 +51,7 @@ namespace GameModel.Infrastructure.Network
             }
             catch
             {
-                return null; 
+                return null;
             }
         }
     }

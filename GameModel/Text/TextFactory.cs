@@ -19,7 +19,7 @@ namespace GameModel.Text
                 var heading = new Heading(nameOrContent, 1, context.CurrentContainer);
                 context.CurrentContainer.AddChild(heading);
                 // Auto-enter new containers? Optional. Let's stay in current for now unless CD is used.
-                context.CurrentContainer = heading; 
+                context.CurrentContainer = heading;
             }
             else if (type == TextType.Paragraph)
             {

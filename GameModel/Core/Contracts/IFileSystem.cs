@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace GameModel.Core.Contracts
 {
     public interface IFileSystem

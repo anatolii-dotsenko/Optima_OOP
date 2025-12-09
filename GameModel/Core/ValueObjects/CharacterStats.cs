@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
-
 namespace GameModel.Core.ValueObjects
 {
     /// <summary>
@@ -22,9 +19,9 @@ namespace GameModel.Core.ValueObjects
         }
 
         public int GetStat(StatType type) => _stats.GetValueOrDefault(type, 0);
-        
+
         public void SetStat(StatType type, int value) => _stats[type] = value;
-        
+
         public void ModifyStat(StatType type, int delta)
         {
             int current = GetStat(type);

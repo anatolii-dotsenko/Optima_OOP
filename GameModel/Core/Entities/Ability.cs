@@ -1,4 +1,3 @@
-using System;
 using GameModel.Core.ValueObjects;
 
 namespace GameModel.Core.Entities
@@ -21,9 +20,9 @@ namespace GameModel.Core.Entities
         public int Apply(CharacterStats userStats, CharacterStats targetStats)
         {
             // 1. Hook: Pre-calculation logic (e.g., consume mana - optionally implemented by subclasses)
-            if (!CanUse(userStats)) 
+            if (!CanUse(userStats))
             {
-                return 0; 
+                return 0;
             }
 
             // 2. Abstract Step: Calculate logic (must be implemented)

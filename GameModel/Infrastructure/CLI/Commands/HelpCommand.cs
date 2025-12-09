@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using GameModel.Core.Contracts;
 
 namespace GameModel.Infrastructure.CLI.Commands
@@ -18,7 +16,7 @@ namespace GameModel.Infrastructure.CLI.Commands
         public void Execute(string[] args, Dictionary<string, string> options)
         {
             Console.WriteLine("Available Commands:");
-            foreach(var cmd in _registry.GetAll())
+            foreach (var cmd in _registry.GetAll())
             {
                 Console.WriteLine($"- {cmd.Keyword}: {cmd.Description}");
             }

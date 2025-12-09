@@ -18,7 +18,7 @@ namespace GameModel
         public void TransitionTo(IAppState newState)
         {
             _currentState = newState;
-            _displayer.Clear(); 
+            _displayer.Clear();
         }
 
         public void Run()
@@ -27,7 +27,7 @@ namespace GameModel
             {
                 // 1. Render current state
                 _currentState.Render(_displayer);
-                
+
                 // 2. Get Input
                 _displayer.Write($"{_currentState.Name} > ");
                 string input = _displayer.ReadLine();

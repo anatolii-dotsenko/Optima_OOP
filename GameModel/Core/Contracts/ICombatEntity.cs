@@ -1,5 +1,5 @@
-using GameModel.Core.ValueObjects;
 using GameModel.Core.Entities;
+using GameModel.Core.ValueObjects;
 
 namespace GameModel.Core.Contracts
 {
@@ -7,12 +7,12 @@ namespace GameModel.Core.Contracts
     {
         string Name { get; }
         bool IsAlive { get; }
-        
-        // State mutation methods
+
+        // state mutation methods
         void TakeDamage(int amount);
         void Heal(int amount);
-        
-        // Data retrieval
+
+        // data retrieval
         CharacterStats GetStats();
         IEnumerable<Ability> GetAbilities();
     }

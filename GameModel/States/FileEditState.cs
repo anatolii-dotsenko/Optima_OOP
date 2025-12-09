@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using GameModel.Core.Contracts;
 using GameModel.Infrastructure.CLI;
 using GameModel.Infrastructure.CLI.Commands;
@@ -21,7 +19,7 @@ namespace GameModel.States
             _fileName = fileName;
             _docContext = new DocumentContext();
             _factory = new TextFactory();
-            
+
             // Parse initial content
             var lines = initialContent.Split('\n');
             foreach (var line in lines)
@@ -65,7 +63,7 @@ namespace GameModel.States
             if (cmd != null)
             {
                 var args = new List<string>(parts);
-                args.RemoveAt(0); 
+                args.RemoveAt(0);
                 cmd.Execute(args.ToArray(), new Dictionary<string, string>());
             }
             else

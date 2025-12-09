@@ -1,5 +1,3 @@
-using System.IO;
-using System.Collections.Generic;
 using GameModel.Core.Contracts;
 
 namespace GameModel.Infrastructure.IO
@@ -14,7 +12,7 @@ namespace GameModel.Infrastructure.IO
         {
             if (string.IsNullOrEmpty(path)) return;
             string newPath = Path.GetFullPath(Path.Combine(_currentPath, path));
-            
+
             if (Directory.Exists(newPath))
             {
                 _currentPath = newPath;

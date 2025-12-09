@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using GameModel.Core.Entities;
 
 namespace GameModel.Core.State

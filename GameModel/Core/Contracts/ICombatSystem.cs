@@ -1,11 +1,10 @@
-using System;
 using GameModel.Core.ValueObjects;
 
 namespace GameModel.Core.Contracts
 {
     public interface ICombatSystem
     {
-        // Pattern: Observer (Events)
+        // pattern observer (events)
         event Action<AttackResult> OnAttackPerformed;
         event Action<AbilityResult> OnAbilityUsed;
         event Action<HealResult> OnHealed;

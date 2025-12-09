@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using GameModel.Core.Contracts;
-using GameModel.Core.State;
 using GameModel.Core.Data;
-using GameModel.Infrastructure.Persistence;
 using GameModel.Core.Entities;
+using GameModel.Core.State;
+using GameModel.Infrastructure.Persistence;
 
 namespace GameModel.Infrastructure.CLI.Commands
 {
