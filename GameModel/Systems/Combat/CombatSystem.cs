@@ -1,3 +1,4 @@
+// implements the core math and logic for attacks and abilities
 using GameModel.Core.Contracts;
 using GameModel.Core.Entities;
 using GameModel.Core.ValueObjects;
@@ -15,14 +16,14 @@ namespace GameModel.Systems.Combat
             var attStats = attacker.GetStats();
             var defStats = defender.GetStats();
 
-            // 1. Physical Damage Calculation
+            // physical damage calculation
             int attack = attStats.GetStat(StatType.Attack);
             int armor = defStats.GetStat(StatType.Armor);
 
-            // Resistance is stored as Int (e.g., 20 = 20%). Converted to decimal for math.
+            // resistance as a percentage
             double resistance = defStats.GetStat(StatType.Resistance) / 100.0;
 
-            // Formula: (Atk - Armor) * (1 - Res)
+            // formula: damage = (attack - armor) * (1 - resistance)
             int flatDamage = Math.Max(0, attack - armor);
             int finalDamage = (int)(flatDamage * (1.0 - resistance));
 
@@ -36,7 +37,7 @@ namespace GameModel.Systems.Combat
             var userStats = user.GetStats();
             var targetStats = target.GetStats();
 
-            // Delegate calculation to Ability (Template Method), then apply results
+            // template method usage delegation to Ability
             int damage = ability.Apply(userStats, targetStats);
             target.TakeDamage(damage);
 

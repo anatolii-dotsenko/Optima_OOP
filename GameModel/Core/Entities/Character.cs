@@ -1,3 +1,4 @@
+// serves as the base class for entities, managing state, stats, and equipment
 using GameModel.Core.Contracts;
 using GameModel.Core.Data;
 using GameModel.Core.Entities.States;
@@ -10,13 +11,13 @@ namespace GameModel.Core.Entities
     {
         public string Name { get; }
 
-        // Internal access for States to modify stats
+        // internal access for States to modify stats
         internal CharacterStats StatsInternal { get; }
 
         protected readonly List<Item> _equipment = new();
         protected readonly List<Ability> _abilities = new();
 
-        // Pattern: State
+        // state pattern
         private ICharacterState _state;
 
         protected Character(string name)
@@ -26,10 +27,10 @@ namespace GameModel.Core.Entities
             _state = new AliveState(); // Default state
         }
 
-        // State Management
+        // state management
         public void SetState(ICharacterState state) => _state = state;
 
-        // Delegating actions to the current State
+        // delegating actions to the current State
         public bool IsAlive => _state is AliveState;
 
         public void TakeDamage(int amount) => _state.TakeDamage(this, amount);
@@ -66,7 +67,7 @@ namespace GameModel.Core.Entities
             return finalStats;
         }
 
-        // --- Pattern: Memento ---
+        // memento pattern
         public IMemento Save()
         {
             return new CharacterMemento(

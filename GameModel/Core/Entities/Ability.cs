@@ -1,12 +1,9 @@
+// defines the template method for ability execution and damage calculation.
 using GameModel.Core.ValueObjects;
 
 namespace GameModel.Core.Entities
 {
-    /// <summary>
-    /// Pattern: Template Method.
-    /// Defines the skeleton of the algorithm in the Apply method, 
-    /// deferring specific steps (CalculateDamage, OnAbilityUsed) to subclasses.
-    /// </summary>
+
     public abstract class Ability
     {
         public string Name { get; }
@@ -16,7 +13,7 @@ namespace GameModel.Core.Entities
             Name = name;
         }
 
-        // The Template Method
+        // template method
         public int Apply(CharacterStats userStats, CharacterStats targetStats)
         {
             // 1. Hook: Pre-calculation logic (e.g., consume mana - optionally implemented by subclasses)
@@ -35,10 +32,10 @@ namespace GameModel.Core.Entities
             return damage;
         }
 
-        // Primitive operation (Abstract)
+        // primitive operation (Abstract)
         protected abstract int CalculateDamage(CharacterStats userStats, CharacterStats targetStats);
 
-        // Hook (Virtual - optional override)
+        // hooks (optional overrides)
         protected virtual bool CanUse(CharacterStats userStats) => true;
         protected virtual void OnAbilityUsed(int damageDealt) { }
     }

@@ -1,3 +1,4 @@
+// defines the structure for executable CLI commands
 namespace GameModel.Core.Contracts
 {
     public interface ICommand

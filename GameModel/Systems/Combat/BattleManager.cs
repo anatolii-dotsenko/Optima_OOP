@@ -1,3 +1,4 @@
+// orchestrates the turn-based battle loop and turn order
 using GameModel.Core.Contracts;
 using GameModel.Core.ValueObjects;
 
@@ -9,7 +10,7 @@ namespace GameModel.Systems.Combat
         private readonly ICombatLogger _logger;
         private readonly List<ICombatEntity> _participants = new();
 
-        // History of turns
+        // turn history for logging purposes
         public List<string> BattleHistory { get; } = new();
 
         public BattleManager(ICombatSystem combatSystem, ICombatLogger logger)
@@ -22,7 +23,7 @@ namespace GameModel.Systems.Combat
 
         public void StartBattle()
         {
-            // Sort by Speed for turn order
+            // sort by Speed stat descending
             _participants.Sort((a, b) => b.GetStats().GetStat(StatType.Speed).CompareTo(a.GetStats().GetStat(StatType.Speed)));
 
             int turnCount = 1;
@@ -46,10 +47,10 @@ namespace GameModel.Systems.Combat
 
         private void ExecuteTurn(ICombatEntity actor, ICombatEntity target)
         {
-            // Simple AI vs Player check could go here
+            // ai vs player decision could be implemented here
             _combatSystem.Attack(actor, target);
 
-            // Record to history
+            // record action in battle history
             BattleHistory.Add($"[{DateTime.Now:HH:mm:ss}] {actor.Name} acted against {target.Name}");
         }
 

@@ -1,3 +1,4 @@
+// defines the contract for the core combat logic and event subscriptions
 using GameModel.Core.ValueObjects;
 
 namespace GameModel.Core.Contracts

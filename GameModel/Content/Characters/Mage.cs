@@ -1,3 +1,4 @@
+// represents a character preset with high magic stats and low armor
 using GameModel.Core.Entities;
 using GameModel.Core.ValueObjects;
 

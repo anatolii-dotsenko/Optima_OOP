@@ -1,3 +1,4 @@
+// serves as the entry point, deciding which mode to launch based on arguments
 using GameModel.Infrastructure.IO;
 using GameModel.Infrastructure.Setup;
 using GameModel.States;

@@ -1,3 +1,4 @@
+// constructs the application graph and registers dependencies.
 using GameModel.Content.Characters;
 using GameModel.Content.Items;
 using GameModel.Core.Contracts;

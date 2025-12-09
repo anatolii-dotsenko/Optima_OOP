@@ -1,3 +1,4 @@
+// manages the main loop for the file manager mode and state transitions
 using GameModel.Core.Contracts;
 
 namespace GameModel
@@ -25,17 +26,17 @@ namespace GameModel
         {
             while (true)
             {
-                // 1. Render current state
+                // render current state
                 _currentState.Render(_displayer);
 
-                // 2. Get Input
+                // get input
                 _displayer.Write($"{_currentState.Name} > ");
                 string input = _displayer.ReadLine();
 
                 if (string.IsNullOrWhiteSpace(input)) continue;
                 if (input.Trim().ToLower() == "exit") break;
 
-                // 3. Handle Input
+                // handle input
                 _currentState.HandleInput(input, this);
             }
         }

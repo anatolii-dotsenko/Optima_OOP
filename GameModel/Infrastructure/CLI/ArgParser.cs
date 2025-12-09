@@ -1,3 +1,4 @@
+// handles parsing raw input strings into commands, arguments, and options
 using System.Text;
 
 namespace GameModel.Infrastructure.CLI

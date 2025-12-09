@@ -1,8 +1,6 @@
+// manages a dictionary of stats and provides methods for modification
 namespace GameModel.Core.ValueObjects
 {
-    /// <summary>
-    /// Flexible dictionary-based stats container (OCP compliant).
-    /// </summary>
     public class CharacterStats
     {
         private readonly Dictionary<StatType, int> _stats = new();
@@ -27,8 +25,6 @@ namespace GameModel.Core.ValueObjects
             int current = GetStat(type);
             _stats[type] = current + delta;
         }
-
-        // --- NEW: Method to export stats to dictionary for DTO ---
         public Dictionary<StatType, int> ToDictionary()
         {
             return new Dictionary<StatType, int>(_stats);

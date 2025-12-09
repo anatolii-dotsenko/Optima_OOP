@@ -1,3 +1,4 @@
+// defines the properties and methods required for an object to participate in combat
 using GameModel.Core.Entities;
 using GameModel.Core.ValueObjects;
 
