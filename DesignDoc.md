@@ -127,6 +127,10 @@ The application supports two distinct functional domains based on the active Str
     * The `net import <name>` command connects to the external **Genshin Impact API** to fetch real-world character data and map it to internal game entities.
 * **Persistence:**
     * The entire world state is serialized to JSON using `save` and restored using `load`. The **Memento** pattern is used to ensure internal object encapsulation is not violated during this process.
+* **JSON Serialization (Save/Load)**
+    * Mechanism: The state of the WorldContext is serialized into a JSON format using System.Text.Json.
+    * Data Object: CharacterData serves as a DTO (Data Transfer Object), capturing the essential state (Stats, Inventory, Class) without persisting logic-heavy objects directly.
+    * Rehydration: Upon loading, the CharacterMapper acts as a Factory, reconstructing live Character entities from the deserialized DTOs, restoring their behavioral state (State Pattern) and inventory.
 
 ### Topic 2: File Manager & Text Editor (Text Mode)
 
@@ -139,3 +143,6 @@ The application supports two distinct functional domains based on the active Str
     * **Tree Navigation:** Users can traverse the internal document structure using `cd` (down) and `up` to modify specific sections nested within headings.
 * **Persistence:**
     * Changes made to the document structure in memory can be written back to the physical file on the disk using the `save` command.
+* **Asset Buffering (Caching)**
+    * Problem: Frequent requests to the external Genshin API for character images are slow and consume bandwidth.
+    * Solution: The ImageCacheService implements a buffering strategy. When character details are requested via net view, the service checks a local hidden directory (.cache/images). Hit: If the image exists, the local path is returned immediately. Miss: If not, the image is downloaded from the CDN, saved to the local disk, and then the path is returned.
